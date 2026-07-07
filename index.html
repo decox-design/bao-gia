@@ -28,6 +28,37 @@
   .hotline-wrap:hover .hotline-tip { opacity:1; visibility:visible; transform:translateY(-50%) scale(1); }
   .hotline-tip.tip-open { opacity:1; visibility:visible; transform:translateY(-50%) scale(1); }
 
+  /* ---- Pricing cards: dynamic hover ---- */
+  .price-card { transition: transform .32s cubic-bezier(.2,.7,.2,1), box-shadow .32s ease, border-color .32s ease, opacity .32s ease; }
+  .price-card:hover { transform: translateY(-14px); box-shadow: 0 28px 56px -20px rgba(22,19,15,.5); border-color:#b3925e !important; }
+  .price-featured:hover { transform: translateY(-22px) !important; box-shadow: 0 34px 66px -16px rgba(179,146,94,.6) !important; }
+  /* làm mờ nhẹ các gói còn lại để nổi bật gói đang rê chuột */
+  .price-grid:hover .price-card:not(:hover) { opacity:.8; }
+  .btn-detail { display:block; width:100%; margin-top:26px; text-align:center; padding:13px; border-radius:12px; font-weight:600; font-size:14px; cursor:pointer; font-family:inherit; transition:filter .2s ease, transform .15s ease; }
+  .btn-detail:hover { filter:brightness(1.06); transform:translateY(-1px); }
+  .btn-detail:active { transform:translateY(0); }
+
+  /* ---- Detailed quote modal ---- */
+  .dq-overlay { position:fixed; inset:0; background:rgba(12,22,29,.62); backdrop-filter:blur(3px); display:none; align-items:flex-start; justify-content:center; z-index:200; padding:36px 16px; overflow-y:auto; opacity:0; transition:opacity .25s ease; }
+  .dq-overlay.open { display:flex; opacity:1; }
+  .dq-modal { background:#fff; border-radius:20px; max-width:760px; width:100%; box-shadow:0 30px 90px rgba(0,0,0,.4); overflow:hidden; transform:translateY(20px) scale(.98); transition:transform .3s cubic-bezier(.2,.7,.2,1); }
+  .dq-overlay.open .dq-modal { transform:translateY(0) scale(1); }
+  .dq-head { padding:26px 30px; color:#fff; position:relative; }
+  .dq-close { position:absolute; top:18px; right:18px; width:34px; height:34px; border-radius:50%; border:none; background:rgba(255,255,255,.18); color:#fff; font-size:20px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+  .dq-close:hover { background:rgba(255,255,255,.32); }
+  .dq-body { max-height:56vh; overflow-y:auto; padding:8px 30px 4px; }
+  .dq-row { display:grid; grid-template-columns:150px 1fr; gap:14px; padding:12px 0; border-bottom:1px solid #eee7db; align-items:start; }
+  .dq-row:last-child { border-bottom:none; }
+  .dq-row .k { font-weight:700; color:#193544; font-size:13.5px; display:flex; align-items:center; gap:9px; }
+  .dq-row .v { color:#4a4438; font-size:13.5px; line-height:1.5; }
+  .dq-ico { color:#b3925e; flex-shrink:0; display:inline-flex; }
+  .dq-notes { background:#f6f2ea; padding:18px 30px 22px; font-size:12.5px; color:#6a6355; line-height:1.7; }
+  .dq-notes b { color:#193544; }
+  .dq-foot { padding:18px 30px 24px; display:flex; gap:12px; flex-wrap:wrap; }
+  .dq-cta { flex:1; min-width:200px; text-align:center; background:#b3925e; color:#fff; padding:15px; border-radius:12px; font-weight:700; font-size:14.5px; text-decoration:none; transition:filter .2s; }
+  .dq-cta:hover { filter:brightness(1.07); }
+  @media (max-width:560px){ .dq-row{ grid-template-columns:1fr; gap:3px; } .dq-body,.dq-head,.dq-notes,.dq-foot{ padding-left:20px; padding-right:20px; } }
+
   /* ---- Responsive ---- */
   @media (max-width:960px){
     .hero-grid { grid-template-columns:1fr !important; gap:36px !important; padding-top:44px !important; padding-bottom:48px !important; }
@@ -452,15 +483,16 @@
         <div style="display:flex; gap:8px; margin-bottom:22px;">
           <button class="goi-btn" data-goi="0" style="flex:1; padding:12px 6px; border-radius:12px; cursor:pointer; text-align:center; border:2px solid #e4dccc; background:#fff;">
             <div style="font-size:13px; font-weight:700; color:#193544;">Phần thô</div>
-            <div style="font-size:11px; color:#7a7267;">+ nhân công</div>
+            <div style="font-size:10.5px; color:#7a7267; line-height:1.25; margin-top:2px;">+ Nhân công hoàn thiện</div>
           </button>
           <button class="goi-btn" data-goi="1" style="flex:1; padding:12px 6px; border-radius:12px; cursor:pointer; text-align:center; border:2px solid #b3925e; background:#e0e8ec;">
-            <div style="font-size:13px; font-weight:700; color:#193544;">Trọn gói</div>
-            <div style="font-size:11px; color:#7a7267;">tiêu chuẩn</div>
+            <div style="font-size:13px; font-weight:700; color:#193544;">Hoàn thiện</div>
+            <div style="font-size:10.5px; color:#7a7267; line-height:1.25; margin-top:2px;">Chưa gồm nội thất</div>
           </button>
           <button class="goi-btn" data-goi="2" style="flex:1; padding:12px 6px; border-radius:12px; cursor:pointer; text-align:center; border:2px solid #e4dccc; background:#fff;">
-            <div style="font-size:13px; font-weight:700; color:#193544;">Cao cấp</div>
-            <div style="font-size:11px; color:#7a7267;">full nội thất</div>
+            <div style="font-size:13px; font-weight:700; color:#193544;">Full nội thất</div>
+            <div style="font-size:10.5px; color:#7a7267; line-height:1.25; margin-top:2px;">Full nội thất và bàn giao nhà</div>
+            <div style="font-size:10.5px; color:#b3925e; font-weight:700; line-height:1.25; margin-top:2px;">Chìa khóa trao tay</div>
           </button>
         </div>
 
@@ -496,7 +528,7 @@
 
     <div class="price-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:22px;">
       <!-- Gói 1 -->
-      <div style="background:#fff; border:1px solid rgba(43,38,32,.08); border-radius:20px; padding:32px 28px;">
+      <div class="price-card" style="background:#fff; border:1px solid rgba(43,38,32,.08); border-radius:20px; padding:32px 28px;">
         <div style="font-size:14px; font-weight:700; letter-spacing:1px; color:#7a7267; margin-bottom:6px;">PHẦN THÔ</div>
         <div style="font-size:14px; color:#7a7267; margin-bottom:18px;">Thô + nhân công hoàn thiện</div>
         <div style="display:flex; align-items:baseline; gap:6px; margin-bottom:22px;"><span style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:38px; font-weight:700;">3.800.000</span><span style="color:#7a7267; font-size:15px;">đ/m²</span></div>
@@ -506,10 +538,10 @@
           <div>✓ Đi âm điện – nước – mạng</div>
           <div>✓ Sơn nước hoàn thiện toàn nhà</div>
         </div>
-        <a href="#lienhe" style="display:block; margin-top:26px; text-align:center; padding:13px; border-radius:12px; border:1.5px solid #193544; color:#193544; font-weight:600; font-size:14px; text-decoration:none;">Nhận báo giá gói này</a>
+        <button type="button" class="btn-detail" data-pkg="basic" style="background:#fff; border:1.5px solid #193544; color:#193544;">Báo giá chi tiết →</button>
       </div>
       <!-- Gói 2 - nổi bật -->
-      <div class="price-featured" style="background:#193544; color:#ffffff; border-radius:20px; padding:32px 28px; position:relative; transform:translateY(-10px); box-shadow:0 24px 50px -18px rgba(22,19,15,.5);">
+      <div class="price-card price-featured" style="background:#193544; color:#ffffff; border-radius:20px; padding:32px 28px; position:relative; transform:translateY(-10px); box-shadow:0 24px 50px -18px rgba(22,19,15,.5);">
         <div style="position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:#b3925e; color:#fff; padding:6px 16px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.5px; white-space:nowrap;">ĐƯỢC CHỌN NHIỀU NHẤT</div>
         <div style="font-size:14px; font-weight:700; letter-spacing:1px; color:#d9bd93; margin-bottom:6px;">TRỌN GÓI TIÊU CHUẨN</div>
         <div style="font-size:14px; color:#a89c88; margin-bottom:18px;">Xây dựng + hoàn thiện cơ bản</div>
@@ -521,10 +553,10 @@
           <div>✓ Hệ đèn chiếu sáng & thiết bị điện</div>
           <div>✓ Nghiệm thu bàn giao dọn vào ở</div>
         </div>
-        <a href="#lienhe" style="display:block; margin-top:26px; text-align:center; padding:13px; border-radius:12px; background:#b3925e; color:#fff; font-weight:700; font-size:14px; text-decoration:none;">Nhận báo giá gói này</a>
+        <button type="button" class="btn-detail" data-pkg="standard" style="background:#b3925e; color:#fff; border:1.5px solid #b3925e;">Báo giá chi tiết →</button>
       </div>
       <!-- Gói 3 -->
-      <div style="background:#fff; border:1px solid rgba(43,38,32,.08); border-radius:20px; padding:32px 28px;">
+      <div class="price-card" style="background:#fff; border:1px solid rgba(43,38,32,.08); border-radius:20px; padding:32px 28px;">
         <div style="font-size:14px; font-weight:700; letter-spacing:1px; color:#7a7267; margin-bottom:6px;">CAO CẤP</div>
         <div style="font-size:14px; color:#7a7267; margin-bottom:18px;">Trọn gói + full nội thất</div>
         <div style="display:flex; align-items:baseline; gap:6px; margin-bottom:22px;"><span style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:38px; font-weight:700;">8.500.000</span><span style="color:#7a7267; font-size:15px;">đ/m²</span></div>
@@ -534,17 +566,37 @@
           <div>✓ Vật liệu, đồ gỗ cao cấp</div>
           <div>✓ Cảnh quan, tiểu cảnh, sân vườn</div>
         </div>
-        <a href="#lienhe" style="display:block; margin-top:26px; text-align:center; padding:13px; border-radius:12px; border:1.5px solid #193544; color:#193544; font-weight:600; font-size:14px; text-decoration:none;">Nhận báo giá gói này</a>
+        <button type="button" class="btn-detail" data-pkg="premium" style="background:#fff; border:1.5px solid #193544; color:#193544;">Báo giá chi tiết →</button>
       </div>
     </div>
     <p style="text-align:center; color:#9a9082; font-size:13px; margin-top:24px;">* Đơn giá chưa gồm VAT, áp dụng khu vực TP.HCM. Nhà hẻm nhỏ &lt;2m, nhà 2 mặt tiền, công trình đặc thù sẽ khảo sát & báo giá riêng.</p>
   </section>
 
+  <!-- ===== MODAL BÁO GIÁ CHI TIẾT ===== -->
+  <div class="dq-overlay" id="dqOverlay" role="dialog" aria-modal="true" aria-labelledby="dqTitle">
+    <div class="dq-modal">
+      <div class="dq-head" id="dqHead">
+        <button type="button" class="dq-close" id="dqClose" aria-label="Đóng">&times;</button>
+        <div style="font-size:12px; font-weight:700; letter-spacing:1.5px; opacity:.8;" id="dqTag">GÓI THI CÔNG</div>
+        <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-top:6px;">
+          <h3 id="dqTitle" style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:26px; font-weight:700;">Gói</h3>
+          <span id="dqPrice" style="font-size:20px; font-weight:700; color:#f0dcb6;">0 đ/m²</span>
+        </div>
+        <div id="dqDesc" style="font-size:13px; opacity:.85; margin-top:4px;"></div>
+      </div>
+      <div style="padding:16px 30px 4px; font-size:13px; font-weight:700; color:#193544; letter-spacing:.3px;">🧱 Quy cách vật tư trong gói</div>
+      <div class="dq-body" id="dqBody"></div>
+      <div class="dq-notes" id="dqNotes"></div>
+      <div class="dq-foot">
+        <a href="#lienhe" class="dq-cta" id="dqCta">Nhận báo giá cho lô đất của tôi →</a>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== HẠNG MỤC ===== -->
   <section id="hangmuc" style="background:#f2f2f3;">
     <div style="max-width:1200px; margin:0 auto; padding:76px 24px;">
-      <div style="text-align:center; margin-bottom:14px;"><span style="font-size:13px; font-weight:700; letter-spacing:2px; color:#b3925e;">TRỌN GÓI KHÔNG PHÁT SINH</span></div>
-      <h2 class="section-h2" style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:40px; font-weight:700; text-align:center; margin-bottom:44px;">Gói thi công gồm những gì?</h2>
+      <h2 class="section-h2" style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:40px; font-weight:700; text-align:center; margin-bottom:44px; margin-top:0;">Gói thi công gồm những gì?</h2>
       <div class="hangmuc-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
         <div style="background:#ffffff; border-radius:18px; padding:28px;">
           <div style="width:48px; height:48px; border-radius:12px; background:#193544; color:#d9bd93; display:flex; align-items:center; justify-content:center; margin-bottom:16px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg></div>
@@ -864,7 +916,7 @@
   // ---- Config ----
   var PHONE = '0901 411 489';
   var PRICES = [3800000, 6200000, 8500000];
-  var GOI_NAMES = ['phần thô', 'trọn gói', 'cao cấp'];
+  var GOI_NAMES = ['phần thô', 'hoàn thiện', 'full nội thất'];
 
   // ---- State ----
   var state = { area: 80, floors: 3, basement: false, goi: 1, filter: 'all', hesoOpen: false };
@@ -1007,6 +1059,59 @@
   window.addEventListener('scroll', toggleScrollTop, { passive: true });
   scrollTopBtn.addEventListener('click', function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); });
   toggleScrollTop();
+
+  // ---- Báo giá chi tiết (modal vật tư) ----
+  var DQ_ITEMS = ['Xi măng','Cát xây tô','Đá','Gạch xây','Thép xây dựng','Bê tông','Ván coppha','Chống thấm','Ống nước','Dây điện','Dây tín hiệu','Ống luồn dây','Đế âm tường','Cọc tiếp địa','Nẹp tô tường','Bồn tự hoại'];
+  var DQ = {
+    basic: {
+      tag:'GÓI CƠ BẢN', name:'Phần thô', price:'3.800.000 đ/m²', desc:'Thô + nhân công hoàn thiện',
+      vals:['Insee PCB40 đa dụng','Cát địa phương','Đá Bình Điền hoặc địa phương','Tuynel Bình Dương, Đồng Nai – Loại B','Việt Nhật CB30','Bê tông thương phẩm đá đen (hoặc trộn tại chỗ)','Ván gỗ, ván ép','SikaTop Seal 107','Bình Minh (áp lực ≥ theo thiết kế) · Cấp nước nóng PP-R','Cáp đơn Cadivi CV (vỏ cách điện PVC)','Cat6 FTP Pro','Sino – MPE','Sino Vanlock','Cọc mạ đồng','Không','Composite Đại Thành 1500L']
+    },
+    standard: {
+      tag:'GÓI TIÊU CHUẨN', name:'Trọn gói tiêu chuẩn', price:'6.200.000 đ/m²', desc:'Xây dựng + hoàn thiện cơ bản',
+      vals:['Insee PCB40 đa dụng','Cát vàng','Đá Đồng Nai hoặc địa phương','Tuynel Bình Dương, Đồng Nai – Loại A','Việt Nhật CB30','Bê tông thương phẩm đá xám (hoặc trộn tại chỗ)','Coppha phủ phim','SikaTop Seal 107','Bình Minh (áp lực ≥ theo thiết kế) · Cấp nước nóng PP-R','Cáp đơn Cadivi CV (vỏ cách điện PVC)','Cat6e FTP Commscope','Sino – MPE','Sino Vanlock','Cọc đồng thau','Có','Composite Đại Thành 2000L']
+    },
+    premium: {
+      tag:'GÓI CAO CẤP', name:'Cao cấp', price:'8.500.000 đ/m²', desc:'Trọn gói + full nội thất',
+      vals:['Insee Power-S đa dụng','Cát vàng','Đá Đồng Nai hoặc địa phương','Tuynel Bình Dương, Đồng Nai – Loại A','Việt Nhật CB4 hoặc Pomina SD390','BTTP đá xám + phụ gia B6 (hoặc trộn tại chỗ)','Coppha phim hoặc nhôm','SikaTop Seal 109','Bình Minh · Toàn bộ ống cấp PP-R','Cáp đơn Cadivi CV (vỏ cách điện PVC)','Cat6 FTP chống nhiễu','Ống luồn Nanoco','Schneider hoặc Panasonic','Cọc đồng thau','Có','Composite Đại Thành 2500L']
+    }
+  };
+  var DQ_CUBE = '<svg class="dq-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+  var DQ_NOTES = '<b>Chi phí có thể điều chỉnh theo đặc thù công trình:</b><br>'+
+    '• Hẻm nhỏ (dưới 4m): <b>+150.000 – 250.000 đ/m²</b><br>'+
+    '• Diện tích dưới 100m²: <b>+100.000 – 200.000 đ/m²</b><br>'+
+    '• Công trình 3–4 mặt tiền: <b>+200.000 – 300.000 đ/m²</b><br>'+
+    '• Địa hình khó, xa nguồn vật tư: <b>+300.000 – 1.500.000 đ/m²</b><br><br>'+
+    '• Vật tư nêu trên có thể dùng loại tương đương hoặc tốt hơn.<br>'+
+    '• Chưa bao gồm: thi công cọc – móng, lưới bao che công trình, biện pháp thi công hầm (cừ vây, shoring, xử lý mực nước ngầm).<br>'+
+    '• Báo giá mang tính tham khảo, chốt chính thức sau khi thống nhất phạm vi thi công.';
+
+  var dqOverlay = document.getElementById('dqOverlay');
+  function openDetail(pkg){
+    var d = DQ[pkg]; if(!d) return;
+    document.getElementById('dqTag').textContent = d.tag;
+    document.getElementById('dqTitle').textContent = 'Gói ' + d.name;
+    document.getElementById('dqPrice').textContent = d.price;
+    document.getElementById('dqDesc').textContent = d.desc;
+    // header màu theo brand: nền navy gradient
+    document.getElementById('dqHead').style.background = 'linear-gradient(135deg,#1d3d4e,#12242e)';
+    var rows = '';
+    for(var i=0;i<DQ_ITEMS.length;i++){
+      rows += '<div class="dq-row"><div class="k">'+DQ_CUBE+DQ_ITEMS[i]+'</div><div class="v">'+d.vals[i]+'</div></div>';
+    }
+    document.getElementById('dqBody').innerHTML = rows;
+    document.getElementById('dqNotes').innerHTML = DQ_NOTES;
+    dqOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDetail(){ dqOverlay.classList.remove('open'); document.body.style.overflow = ''; }
+  Array.prototype.forEach.call(document.querySelectorAll('.btn-detail'), function(btn){
+    btn.addEventListener('click', function(){ openDetail(btn.getAttribute('data-pkg')); });
+  });
+  document.getElementById('dqClose').addEventListener('click', closeDetail);
+  document.getElementById('dqCta').addEventListener('click', closeDetail);
+  dqOverlay.addEventListener('click', function(e){ if(e.target === dqOverlay) closeDetail(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeDetail(); });
 
   // ---- Initial render ----
   renderCalc();
