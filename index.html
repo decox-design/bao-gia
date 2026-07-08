@@ -973,7 +973,7 @@
           </form>
           <div id="leadThanks" style="display:none; text-align:center; padding:40px 0;">
             <div style="width:72px; height:72px; border-radius:50%; background:#e8f0e6; color:#3f8a4f; display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 22px;">✓</div>
-            <h3 style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:26px; font-weight:700; margin-bottom:12px;">Cảm ơn <span id="sentName">bạn</span>!</h3>
+            <h3 style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:26px; font-weight:700; margin-bottom:12px;">Cảm ơn bạn!</h3>
             <p style="font-size:15px; color:#6a6355; line-height:1.6;">Decox đã nhận thông tin và sẽ liên hệ trong vòng 24h. Xem ngay bảng báo giá đầy đủ theo thông số của bạn:</p>
             <a href="https://dezon.vn/planning/" target="_blank" rel="noopener" style="display:inline-block; margin-top:22px; background:#b3925e; color:#fff; padding:15px 34px; border-radius:12px; font-size:15px; font-weight:700; text-decoration:none;">Xem báo giá đầy đủ →</a>
           </div>
@@ -1282,8 +1282,6 @@
     e.preventDefault();
     var phone = $('fPhone').value.trim();
     if (!phone) { $('fPhone').focus(); return; }
-    var name = $('fName').value.trim() || 'bạn';
-    $('sentName').textContent = name;
     $('leadForm').style.display = 'none';
     $('leadThanks').style.display = 'block';
   });
