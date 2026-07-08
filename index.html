@@ -516,19 +516,26 @@
           <button class="opt-btn ham-btn" data-ham="2">Full hầm</button>
         </div>
 
-        <div style="display:flex; gap:12px; margin-bottom:6px;">
+        <div style="display:flex; gap:10px; margin-bottom:6px;">
           <div style="flex:1;">
             <label class="opt-label">Tầng lửng</label>
             <div class="opt-row">
               <button class="opt-btn on lung-btn" data-lung="0">Không</button>
-              <button class="opt-btn lung-btn" data-lung="0.7">Có</button>
+              <button class="opt-btn lung-btn" data-lung="0.65">Có</button>
             </div>
           </div>
           <div style="flex:1;">
             <label class="opt-label">Tầng tum</label>
             <div class="opt-row">
               <button class="opt-btn on tum-btn" data-tum="0">Không</button>
-              <button class="opt-btn tum-btn" data-tum="0.5">Có</button>
+              <button class="opt-btn tum-btn" data-tum="0.45">Có</button>
+            </div>
+          </div>
+          <div style="flex:1;">
+            <label class="opt-label">Sân thượng</label>
+            <div class="opt-row">
+              <button class="opt-btn on st-btn" data-st="0">Không</button>
+              <button class="opt-btn st-btn" data-st="0.7">Có</button>
             </div>
           </div>
         </div>
@@ -556,7 +563,7 @@
             <span style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:34px; font-weight:700; color:#fff;"><span id="totalText">≈ 1,74 tỷ</span></span>
           </div>
         </div>
-        <p style="font-size:11.5px; color:#9a9082; margin-top:9px; line-height:1.5;">*Hệ số: móng 50% + bán hầm 150% / full hầm 200% + 100%/tầng cơ bản (trệt/lầu) + tầng lửng 70% + tầng tum/mái BTCT 50%. Hệ số thực tế thay đổi theo loại móng & độ sâu hầm & loại mái — xem bảng “Cách tính diện tích” bên dưới.</p>
+        <p style="font-size:11.5px; color:#9a9082; margin-top:9px; line-height:1.5;">*Hệ số: móng 50% + bán hầm 150% / full hầm 200% + 100%/tầng cơ bản (trệt/lầu) + tầng lửng 65% + tầng tum 30% + mái BTCT tum 15% + sân thượng 70%. Hệ số thực tế thay đổi theo loại móng & độ sâu hầm & loại mái — xem bảng “Cách tính diện tích” bên dưới.</p>
         <button type="button" id="ktBtn" style="display:block; width:100%; box-sizing:border-box; margin-top:14px; text-align:center; background:#b3925e; color:#fff; padding:15px; border-radius:12px; font-size:15px; font-weight:700; border:none; cursor:pointer; font-family:inherit; animation:pulseGold 2.4s infinite;">Báo cáo chi tiết →</button>
       </div>
 
@@ -690,7 +697,7 @@
       <div class="dq-body" id="ktBody"></div>
       <div class="dq-foot">
         <button type="button" class="dq-cta" id="ktMaterial" style="flex:1; min-width:170px; background:#fff; color:#193544; border:1.5px solid #193544;">Xem chi tiết vật tư</button>
-        <a href="https://dezon.vn/planning/" target="_blank" rel="noopener" class="dq-cta" id="ktLead" style="flex:1; min-width:170px;">Nhận báo giá đầy đủ →</a>
+        <a href="#lienhe" class="dq-cta" id="ktLead" style="flex:1; min-width:170px;">Nhận báo giá đầy đủ →</a>
       </div>
     </div>
   </div>
@@ -967,7 +974,8 @@
           <div id="leadThanks" style="display:none; text-align:center; padding:40px 0;">
             <div style="width:72px; height:72px; border-radius:50%; background:#e8f0e6; color:#3f8a4f; display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 22px;">✓</div>
             <h3 style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:26px; font-weight:700; margin-bottom:12px;">Cảm ơn <span id="sentName">bạn</span>!</h3>
-            <p style="font-size:15px; color:#6a6355; line-height:1.6;">Decox đã nhận thông tin và sẽ liên hệ với bạn trong vòng 24h để gửi báo giá chi tiết.</p>
+            <p style="font-size:15px; color:#6a6355; line-height:1.6;">Decox đã nhận thông tin và sẽ liên hệ trong vòng 24h. Xem ngay bảng báo giá đầy đủ theo thông số của bạn:</p>
+            <a href="https://dezon.vn/planning/" target="_blank" rel="noopener" style="display:inline-block; margin-top:22px; background:#b3925e; color:#fff; padding:15px 34px; border-radius:12px; font-size:15px; font-weight:700; text-decoration:none;">Xem báo giá đầy đủ →</a>
           </div>
         </div>
       </div>
@@ -1054,7 +1062,7 @@
   var CARD_NAMES = ['Thô', 'Hoàn thiện cơ bản', 'Trọn gói'];
 
   // ---- State ----
-  var state = { area: 80, floors: 3, ham: 0, lung: 0, tum: 0, tier: 'tc', type: 1, level: 0, filter: 'all', hesoOpen: false };
+  var state = { area: 80, floors: 3, ham: 0, lung: 0, tum: 0, st: 0, tier: 'tc', type: 1, level: 0, filter: 'all', hesoOpen: false };
   var lastCalc = { heso: 3.5, dt: 280, gia: 6800000, total: 1904000000, isTC: true };
 
   // ---- Helpers ----
@@ -1091,9 +1099,8 @@
     // Hệ số diện tích xây dựng — theo bảng chuẩn Decox:
     var HS_MONG = 0.5;   // Móng — LUÔN cộng 50%
     var HS_SAN  = 1.0;   // Sàn mỗi tầng — 100%
-    // Mái = tầng tum (chỉ cộng 50% khi CÓ tum). Không có mái cố định riêng.
-    // s.ham: 0 / 1.5 (bán hầm) / 2.0 (full hầm) · s.lung: 0 / 0.7 · s.tum: 0 / 0.5 (mái)
-    var heso = HS_MONG + s.floors * HS_SAN + s.ham + s.lung + s.tum;
+    // Không có mái cố định riêng. s.ham: 0/1.5/2.0 · s.lung: 0/0.65 · s.tum: 0/0.45 (tum 30% + mái BTCT tum 15%) · s.st: 0/0.70 (sân thượng)
+    var heso = HS_MONG + s.floors * HS_SAN + s.ham + s.lung + s.tum + s.st;
     var dt = s.area * heso;
     var isTC = s.tier === 'tc';
     var gia = isTC ? PRICE_MATRIX.tc[s.type][0] : PRICE_MATRIX.cc[s.type];
@@ -1118,6 +1125,7 @@
     mark('.ham-btn',  function(b){ return parseFloat(b.getAttribute('data-ham'))  === s.ham;  });
     mark('.lung-btn', function(b){ return parseFloat(b.getAttribute('data-lung')) === s.lung; });
     mark('.tum-btn',  function(b){ return parseFloat(b.getAttribute('data-tum'))  === s.tum;  });
+    mark('.st-btn',   function(b){ return parseFloat(b.getAttribute('data-st'))   === s.st;   });
     mark('.tier-btn', function(b){ return b.getAttribute('data-tier') === s.tier; });
     mark('.type-btn', function(b){ return Number(b.getAttribute('data-type')) === s.type; });
   }
@@ -1199,6 +1207,9 @@
   });
   Array.prototype.forEach.call(document.querySelectorAll('.tum-btn'), function(btn){
     btn.addEventListener('click', function(){ state.tum = parseFloat(btn.getAttribute('data-tum')); renderCalc(); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.st-btn'), function(btn){
+    btn.addEventListener('click', function(){ state.st = parseFloat(btn.getAttribute('data-st')); renderCalc(); });
   });
   Array.prototype.forEach.call(document.querySelectorAll('.tier-btn'), function(btn){
     btn.addEventListener('click', function(){ state.tier = btn.getAttribute('data-tier'); renderCalc(); });
@@ -1350,7 +1361,8 @@
     var t = state.floors + ' tầng';
     if (state.ham === 1.5) t += ' · Bán hầm'; else if (state.ham === 2) t += ' · Full hầm';
     if (state.lung) t += ' · Tầng lửng';
-    if (state.tum) t += ' · Tầng tum (mái)';
+    if (state.tum) t += ' · Tầng tum';
+    if (state.st) t += ' · Sân thượng';
     return t;
   }
   function ktRow(k, v){ return '<div class="dq-row"><div class="k">' + k + '</div><div class="v" style="text-align:right; font-weight:700; color:#193544;">' + v + '</div></div>'; }
@@ -1372,8 +1384,9 @@
     var comps = [{ label: 'Móng (50%)', hs: 0.5 }, { label: 'Sàn ' + s.floors + ' tầng (100%/tầng)', hs: s.floors * 1.0 }];
     if (s.ham === 1.5) comps.push({ label: 'Bán hầm (150%)', hs: 1.5 });
     else if (s.ham === 2) comps.push({ label: 'Full hầm (200%)', hs: 2.0 });
-    if (s.lung) comps.push({ label: 'Tầng lửng (70%)', hs: 0.7 });
-    if (s.tum) comps.push({ label: 'Tầng tum / mái (50%)', hs: 0.5 });
+    if (s.lung) comps.push({ label: 'Tầng lửng (65%)', hs: 0.65 });
+    if (s.tum) { comps.push({ label: 'Tầng tum (30%)', hs: 0.30 }); comps.push({ label: 'Mái BTCT tum (15%)', hs: 0.15 }); }
+    if (s.st) comps.push({ label: 'Sân thượng (70%)', hs: 0.70 });
 
     var brk = '<div style="margin-top:15px; font-size:13px; font-weight:800; color:#193544;">📐 Cách tính chi phí</div>' +
               '<div style="font-size:11.5px; color:#9a9082; margin:2px 0 4px;">Mỗi phần = DT 1 sàn (' + s.area + ' m²) × hệ số × đơn giá</div>';
@@ -1403,7 +1416,14 @@
   function closeKt(){ ktOverlay.classList.remove('open'); document.body.style.overflow = ''; }
   document.getElementById('ktBtn').addEventListener('click', openKhaiToan);
   document.getElementById('ktClose').addEventListener('click', closeKt);
-  document.getElementById('ktLead').addEventListener('click', closeKt);
+  document.getElementById('ktLead').addEventListener('click', function(){
+    closeKt();
+    var c = lastCalc, s = state;
+    var need = 'Diện tích 1 sàn ' + s.area + 'm² · ' + quyMoText() + ' · Gói ' + TYPE_FULL[s.type] + ' (' + TIER_FULL[s.tier] + ') · Chi phí dự kiến ' + (c.isTC ? '≈ ' : 'từ ') + fmtTy(c.total);
+    var fNeed = document.getElementById('fNeed');
+    if (fNeed && !fNeed.value.trim()) fNeed.value = need;
+    setTimeout(function(){ var fn = document.getElementById('fName'); if (fn) fn.focus(); }, 500);
+  });
   document.getElementById('ktMaterial').addEventListener('click', function(){ closeKt(); openDetail(state.tier === 'cc' ? 'premium' : 'standard'); });
   ktOverlay.addEventListener('click', function(e){ if(e.target === ktOverlay) closeKt(); });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeKt(); });
