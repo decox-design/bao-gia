@@ -528,14 +528,14 @@
             <label class="opt-label">Tầng tum</label>
             <div class="opt-row">
               <button class="opt-btn on tum-btn" data-tum="0">Không</button>
-              <button class="opt-btn tum-btn" data-tum="0.45">Có</button>
+              <button class="opt-btn tum-btn" data-tum="0.3">Có</button>
             </div>
           </div>
           <div style="flex:1;">
             <label class="opt-label">Sân thượng</label>
             <div class="opt-row">
               <button class="opt-btn on st-btn" data-st="0">Không</button>
-              <button class="opt-btn st-btn" data-st="0.7">Có</button>
+              <button class="opt-btn st-btn" data-st="0.49">Có</button>
             </div>
           </div>
         </div>
@@ -563,7 +563,7 @@
             <span style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:34px; font-weight:700; color:#fff;"><span id="totalText">≈ 1,74 tỷ</span></span>
           </div>
         </div>
-        <p style="font-size:11.5px; color:#9a9082; margin-top:9px; line-height:1.5;">*Hệ số: móng 50% + mái 50% + bán hầm 150% / full hầm 200% + 100%/tầng cơ bản (trệt/lầu) + tầng lửng 65% + tầng tum 30% + mái BTCT tum 15% + sân thượng 70%. Hệ số thực tế thay đổi theo loại móng & độ sâu hầm & loại mái — xem bảng “Cách tính diện tích” bên dưới.</p>
+        <p style="font-size:11.5px; color:#9a9082; margin-top:9px; line-height:1.5;">*Chi phí = tổng (DT phần × hệ số × đơn giá) từng hạng mục: móng 80×50% · tầng 80×100% · bán hầm 80×150% / full hầm 80×200% · lửng 52×100% (kèm thông tầng 28×50%) · sân thượng 56×70% · tum 24×100% · mái BTCT (không tum 80×50% · có tum = DT tum×50%). Bấm “Báo cáo chi tiết” để xem bảng đầy đủ.</p>
         <button type="button" id="ktBtn" style="display:block; width:100%; box-sizing:border-box; margin-top:14px; text-align:center; background:#b3925e; color:#fff; padding:15px; border-radius:12px; font-size:15px; font-weight:700; border:none; cursor:pointer; font-family:inherit; animation:pulseGold 2.4s infinite;">Báo cáo chi tiết →</button>
       </div>
 
@@ -1097,11 +1097,12 @@
   function renderCalc(){
     var s = state;
     // Hệ số diện tích xây dựng — theo bảng chuẩn Decox:
-    var HS_MONG = 0.5;   // Móng — LUÔN cộng 50%
-    var HS_MAI  = 0.5;   // Mái — LUÔN cộng 50% (giống móng)
-    var HS_SAN  = 1.0;   // Sàn mỗi tầng — 100%
-    // s.ham: 0/1.5/2.0 · s.lung: 0/0.65 · s.tum: 0/0.45 (tum 30% + mái BTCT tum 15%) · s.st: 0/0.70 (sân thượng)
-    var heso = HS_MONG + HS_MAI + s.floors * HS_SAN + s.ham + s.lung + s.tum + s.st;
+    var HS_MONG = 0.5;    // Móng — LUÔN cộng 50%
+    var HS_MAI  = s.tum > 0 ? 0.15 : 0.50;   // Mái BTCT: KHÔNG tum → 50% sàn · CÓ tum → DT tum × 50% (= 15% sàn)
+    var HS_SAN  = 1.0;    // Sàn mỗi tầng — 100%
+    var HS_TT   = s.lung > 0 ? 0.175 : 0;    // Thông tầng — chỉ khi CÓ lửng: 35% sàn × 50% = 17,5%
+    // s.ham: 0/1.5/2.0 · s.lung: 0/0.65 · s.tum: 0/0.30 · s.st: 0/0.70 (sân thượng)
+    var heso = HS_MONG + HS_MAI + s.floors * HS_SAN + s.ham + s.lung + HS_TT + s.tum + s.st;
     var dt = s.area * heso;
     var isTC = s.tier === 'tc';
     var gia = isTC ? PRICE_MATRIX.tc[s.type][0] : PRICE_MATRIX.cc[s.type];
@@ -1504,25 +1505,36 @@
                '<div style="display:flex; justify-content:space-between; font-size:13px; color:#7a7267; padding:4px 0;"><span>Quy mô</span><b style="color:#193544;">' + quyMoText() + '</b></div>' +
                '<div style="display:flex; justify-content:space-between; font-size:13px; color:#7a7267; padding:4px 0;"><span>Đơn giá (' + TYPE_FULL[s.type] + ' · ' + TIER_FULL[s.tier] + ')</span><b style="color:#193544;">' + pre + vnd(c.gia) + ' đ/m²</b></div>';
 
-    // Diễn giải chi phí theo từng phần: DT 1 sàn × hệ số × đơn giá
-    var comps = [{ label: 'Móng (50%)', hs: 0.5 }, { label: 'Mái (50%)', hs: 0.5 }, { label: 'Sàn ' + s.floors + ' tầng (100%/tầng)', hs: s.floors * 1.0 }];
-    if (s.ham === 1.5) comps.push({ label: 'Bán hầm (150%)', hs: 1.5 });
-    else if (s.ham === 2) comps.push({ label: 'Full hầm (200%)', hs: 2.0 });
-    if (s.lung) comps.push({ label: 'Tầng lửng (65%)', hs: 0.65 });
-    if (s.tum) { comps.push({ label: 'Tầng tum (30%)', hs: 0.30 }); comps.push({ label: 'Mái BTCT tum (15%)', hs: 0.15 }); }
-    if (s.st) comps.push({ label: 'Sân thượng (70%)', hs: 0.70 });
+    // Diễn giải chi phí — 5 cột: Phần · DT sàn · DT phần · Hệ số · Thành tiền. Thành tiền = DT phần × hệ số × đơn giá
+    var A = s.area;
+    var comps = [ { name:'Móng', ft:A, chg:0.5 } ];
+    if (s.ham === 1.5) comps.push({ name:'Bán hầm', ft:A, chg:1.5 });
+    else if (s.ham === 2) comps.push({ name:'Full hầm', ft:A, chg:2.0 });
+    comps.push({ name:'Sàn ' + s.floors + ' tầng', ft:A * s.floors, chg:1.0 });
+    if (s.lung) { comps.push({ name:'Tầng lửng', ft:A * 0.65, chg:1.0 }); comps.push({ name:'Thông tầng', ft:A * 0.35, chg:0.5 }); }
+    if (s.st) comps.push({ name:'Sân thượng', ft:A * 0.70, chg:0.7 });
+    if (s.tum) comps.push({ name:'Tầng tum', ft:A * 0.30, chg:1.0 });
+    comps.push(s.tum ? { name:'Mái BTCT tum', ft:A * 0.30, chg:0.5 } : { name:'Mái BTCT', ft:A, chg:0.5 });
 
     var brk = '<div style="margin-top:15px; font-size:13px; font-weight:800; color:#193544;">📐 Cách tính chi phí</div>' +
-              '<div style="font-size:11.5px; color:#9a9082; margin:2px 0 4px;">Mỗi phần = DT 1 sàn (' + s.area + ' m²) × hệ số × đơn giá</div>';
+              '<div style="font-size:11.5px; color:#9a9082; margin:2px 0 6px;">Thành tiền = Diện tích × hệ số × đơn giá</div>' +
+              '<div style="display:grid; grid-template-columns:minmax(88px,1fr) 62px 46px auto; gap:0 10px; font-size:12.5px; align-items:center;">';
+    var TH = 'font-size:10px; font-weight:800; letter-spacing:.2px; text-transform:uppercase; color:#9a9082; padding:0 0 6px;';
+    brk += '<div style="'+TH+'">Phần</div><div style="'+TH+' text-align:right;">Diện tích</div><div style="'+TH+' text-align:center;">Hệ số</div><div style="'+TH+' text-align:right;">Thành tiền</div>';
     for (var j = 0; j < comps.length; j++){
-      var dtp = s.area * comps[j].hs, cost = dtp * c.gia;
-      brk += '<div style="display:flex; justify-content:space-between; gap:10px; padding:9px 0; border-top:1px solid #eee7db; font-size:13.5px;">' +
-               '<span style="color:#4a4438;">' + comps[j].label + ' · <span style="color:#9a9082;">' + m2(dtp) + ' m²</span></span>' +
-               '<b style="white-space:nowrap; color:#193544;">' + pre + vnd(cost) + ' đ</b></div>';
+      var cost = comps[j].ft * comps[j].chg * c.gia;
+      var TD = 'padding:8px 0; border-top:1px solid #eee7db;';
+      brk += '<div style="'+TD+' color:#4a4438;">' + comps[j].name + '</div>' +
+             '<div style="'+TD+' text-align:right; color:#4a4438;">' + m2(comps[j].ft) + ' m²</div>' +
+             '<div style="'+TD+' text-align:center; color:#9a9082;">' + Math.round(comps[j].chg * 100) + '%</div>' +
+             '<div style="'+TD+' text-align:right; font-weight:700; color:#193544; white-space:nowrap;">' + vnd(cost) + '</div>';
     }
-    brk += '<div style="display:flex; justify-content:space-between; gap:10px; padding:12px 0 2px; margin-top:4px; border-top:2px solid #193544; font-size:14.5px;">' +
-             '<span style="font-weight:800; color:#193544;">Tổng · ' + m2(c.dt) + ' m² xây dựng</span>' +
-             '<b style="white-space:nowrap; color:#b3925e; font-size:17px;">' + pre + fmtTy(c.total) + '</b></div>';
+    var TF = 'padding:11px 0 2px; border-top:2px solid #193544; font-weight:800; color:#193544;';
+    brk += '<div style="'+TF+'">Tổng xây dựng</div>' +
+           '<div style="'+TF+' text-align:right;">' + m2(c.dt) + ' m²</div>' +
+           '<div style="'+TF+'"></div>' +
+           '<div style="'+TF+' text-align:right; color:#b3925e; white-space:nowrap;">' + pre + fmtTy(c.total) + '</div>' +
+           '</div>';
 
     // Gói bao gồm (tích luỹ theo hạng mục)
     var scope = SCOPE[0].slice();
