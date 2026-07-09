@@ -625,7 +625,7 @@
           <div>✓ <b>M&amp;E:</b> Đi ống âm tường/sàn hệ điện nước</div>
           <div>✓ <b>Chống thấm:</b> Sàn WC, ban công, sân thượng, mái</div>
         </div>
-        <button type="button" class="btn-detail" data-pkg="basic" style="background:#fff; border:1.5px solid #193544; color:#193544;">Chi tiết vật tư →</button>
+        <button type="button" class="btn-detail" data-type="0" style="background:#fff; border:1.5px solid #193544; color:#193544;">Chi tiết vật tư →</button>
       </div>
       <!-- Gói 2: HOÀN THIỆN CƠ BẢN - nổi bật -->
       <div class="price-card price-featured" style="border:1px solid rgba(43,38,32,.08); border-radius:20px; padding:32px 28px; position:relative;">
@@ -642,7 +642,7 @@
           <div>✓ <b>Thiết bị:</b> Thiết bị điện, đèn chiếu sáng, thiết bị vệ sinh</div>
           <div>✓ <b>Nhân công hoàn thiện:</b> Ốp lát, sơn nước, lắp thiết bị</div>
         </div>
-        <button type="button" class="btn-detail" data-pkg="standard" style="background:#fff; border:1.5px solid #193544; color:#193544;">Chi tiết vật tư →</button>
+        <button type="button" class="btn-detail" data-type="1" style="background:#fff; border:1.5px solid #193544; color:#193544;">Chi tiết vật tư →</button>
       </div>
       <!-- Gói 3: TRỌN GÓI -->
       <div class="price-card" style="border:1px solid rgba(43,38,32,.08); border-radius:20px; padding:32px 28px;">
@@ -655,7 +655,7 @@
           <div>✓ <b>Nội thất rời:</b> Sofa, bàn trà, kệ tivi, bộ bàn ăn, giường ngủ, tab đầu giường</div>
           <div>✓ <b>Tiện ích:</b> Rèm cửa 2 lớp</div>
         </div>
-        <button type="button" class="btn-detail" data-pkg="premium" style="background:#fff; border:1.5px solid #193544; color:#193544;">Chi tiết vật tư →</button>
+        <button type="button" class="btn-detail" data-type="2" style="background:#fff; border:1.5px solid #193544; color:#193544;">Chi tiết vật tư →</button>
       </div>
     </div>
     <p style="text-align:center; color:#9a9082; font-size:13px; margin-top:24px;">* Đơn giá chưa gồm VAT, áp dụng khu vực TP.HCM. Nhà hẻm nhỏ &lt;2m, nhà 2 mặt tiền, công trình đặc thù sẽ khảo sát & báo giá riêng.</p>
@@ -1297,20 +1297,135 @@
 
   // ---- Báo giá chi tiết (modal vật tư) ----
   var DQ_ITEMS = ['Xi măng','Cát xây tô','Đá','Gạch xây','Thép xây dựng','Bê tông','Ván coppha','Chống thấm','Ống nước','Dây điện','Dây tín hiệu','Ống luồn dây','Đế âm tường','Cọc tiếp địa','Nẹp tô tường','Bồn tự hoại'];
+  var DQ_THO_TC = [
+    ['Thép','Việt Nhật (Vina Kyoei Steel) – thép Nhật'],
+    ['Cát','Cát Tây Ninh – cát sạch đổ bê tông, xây tô theo tiêu chuẩn XDVN (hoặc tương đương)'],
+    ['Đá','Đá xanh Hóa An Đồng Nai 1×2 đổ bê tông theo tiêu chuẩn XDVN (hoặc tương đương)'],
+    ['Gạch xây','Gạch Tuynen Bình Dương – ống 4 lỗ 8×8×18, đinh 2 lỗ 4×8×18, mí 8×8×8 (hoặc tương đương)'],
+    ['Xi măng','INSEE, Hà Tiên – cho công tác bê tông & xây tô'],
+    ['Dây điện','Cadivi (hoặc tương đương)'],
+    ['Dây antena, điện thoại, ADSL','Sino (hoặc tương đương)'],
+    ['Ống cứng, ống ruột gà','Sino-Vanlock (hoặc tương đương)'],
+    ['Đế âm, hộp chia','Sino (hoặc tương đương)'],
+    ['Tủ điện CB','Sino, Mpe (hoặc tương đương)'],
+    ['Ống cấp nước nóng, lạnh','Bình Minh (PPR)'],
+    ['Ống cấp nước lộ thiên trên mái','Ống đen VESBO – chống tia UV & chống mục thành ống (hoặc tương đương)'],
+    ['Ống thoát nước','Bình Minh (PVC, uPVC)'],
+    ['Mái ngói','Đồng Tâm, Ruby (hoặc tương đương)'],
+    ['Chống thấm sàn ban công, mái','Kova CT-11A'],
+    ['Chống thấm sàn vệ sinh, kết nối vữa dán gạch','Sika Topseal – chống thấm đàn hồi cho sàn vệ sinh / Sika Latex – phụ gia chống thấm & kết nối']
+  ];
+  var DQ_THO_CC = [
+    ['Cốp pha','Sàn dùng cốp pha tấm phủ phim; dầm/cột ván đỏ; giàn giáo H, cây chống sắt cho sàn – dầm – sê nô'],
+    ['Xi măng','Insee PC40 / Vicem Hà Tiên PCB40; xây tô Hà Tiên – Insee (M75)'],
+    ['Thép','Việt Nhật, Pomina hoặc tương đương CB4'],
+    ['Bê tông','Thương phẩm M300 (dầm, sàn) – Mê Kông / Rạch Chiếc / SMC hoặc tương đương; trộn tại chỗ M250 cho cấu kiện nhỏ (cột, dầm lintel, đà giằng)'],
+    ['Cát','Cát hạt lớn đổ bê tông; cát xây tô (cát đờ mi)'],
+    ['Đá','Đá Đồng Nai 1×3 – bê tông cột đổ tại chỗ & bê tông lót'],
+    ['Gạch','Tám Quỳnh, Đồng Tâm hoặc tương đương (CĐT duyệt); bó móng/bó nền dùng gạch cháy'],
+    ['Cục kê bê tông','Đúc sẵn'],
+    ['Ống thoát nước','Nhựa uPVC Bình Minh (D114×3.1 PN6, D90×2.6, D60×1.8 PN6, D42×1.9 PN9, D34×1.9 PN12, D27×1.6 PN12)'],
+    ['Ống cấp nước nóng, lạnh','PPR Bình Minh (ống lạnh D25×4.2mm PN20)'],
+    ['Dây internet','Cáp mạng Cat6 Sino'],
+    ['Dây điện nguồn','Cadivi'],
+    ['Cọc tiếp địa','03 cọc'],
+    ['Ống luồn dây điện âm tường / dầm sàn','Ống cứng Vanlock, Sino (dầm, sàn BTCT); ruột gà âm tường & thả trần Sino – MPE'],
+    ['Chống thấm','Sikatop Seal 109 + lưới thủy tinh']
+  ];
+  // Vật tư Hoàn thiện · Tiêu chuẩn (cột Tiêu chuẩn). Dòng có phần tử 2 rỗng = tiêu đề nhóm.
+  var DQ_HT_TC = [
+    ['TRẦN THẠCH CAO',''],
+    ['Trần thạch cao','Vĩnh Tường khung chìm Tika, tấm Gyproc Siêu bền X 9mm'],
+    ['Trần thạch cao (vệ sinh)','Vĩnh Tường khung chìm Tika, tấm Gyproc siêu chống ẩm 9mm'],
+    ['Shadowline / khe hắt sáng','Vĩnh Tường (theo thiết kế)'],
+    ['Nắp thăm trần','Vĩnh Tường 450×450'],
+    ['SƠN NƯỚC TRONG & NGOÀI',''],
+    ['Sơn trong nhà','Dulux Easy Clean · 1 lớp lót + 2 lớp phủ'],
+    ['Bột trét trong nhà','Joton SP Filler · 2 lớp matic'],
+    ['Sơn ngoài nhà','Dulux Weather Shield · 1 lớp lót + 2 lớp phủ'],
+    ['Bột trét ngoài nhà','Joton siêu trắng · 2 lớp matic'],
+    ['ỐP LÁT SÀN – TƯỜNG',''],
+    ['Gạch nền các tầng','Viglacera / Taicera · 80×80'],
+    ['Sàn gỗ công nghiệp','Egger 8mm (Germany) · lớp lót cao su non'],
+    ['Gạch ốp tường toilet','Viglacera / Taicera · 60×120'],
+    ['Gạch sàn toilet','Viglacera / Taicera · 60×60'],
+    ['Gạch/đá ốp mặt tiền','Vật liệu tùy chọn theo thiết kế'],
+    ['Gạch sân, ban công, sân thượng','Viglacera / Taicera · 30×60 (không gồm gạch ốp mái/tum)'],
+    ['Cán nền','Dày 3–5cm, vữa xi măng mác 75'],
+    ['Keo dán gạch','Webertai fix (Pháp / SX Việt Nam)'],
+    ['Keo chà ron','Weber classic (Pháp / SX Việt Nam)'],
+    ['CỬA CHÍNH, CỬA ĐI',''],
+    ['Cửa chính trượt 2 ray','Maxpro 1.4mm · kính cường lực 8mm (Japan / SX Việt Nam)'],
+    ['Cửa đi','Maxpro D02 1.4mm · kính cường lực 10mm'],
+    ['Cửa sổ','Maxpro S01 1.2mm 2 cánh lùa · kính cường lực 8mm'],
+    ['Khóa cửa chính','Yale YDMA 100NP · vân tay + PIN (Italy)'],
+    ['Cửa phòng','Gỗ nhựa Composite ApexDoor · phụ kiện Hafele (bản lề 921.17.142, chặn cửa 489.70.246)'],
+    ['Tay nắm cửa phòng','Hafele 499.62.504 (tay gạt + thân khóa + ruột khóa)'],
+    ['Cửa WC','Gỗ nhựa Composite ApexDoor · phụ kiện Hafele'],
+    ['Tay nắm cửa WC','Hafele 489.10.660'],
+    ['Cửa thép chống cháy','Saigondoor TCC.P1G1-1-C1 · ra sân sau/sân thượng, 1.2×2.4m'],
+    ['LEN, CẦU THANG, LAN CAN',''],
+    ['Gạch cầu thang chống trượt','Nguyên tấm không mí nối, đơn sắc/vân gỗ 470×1200mm (China)'],
+    ['Lan can trong nhà','Kính cường lực 10mm, cao 1100mm, phụ kiện Inox'],
+    ['Tay vịn lan can','Gỗ Oak 50×50 hoặc Inox'],
+    ['Lan can ngoài trời','Inox / sắt mỹ thuật, cao 1.2m, kính an toàn 10mm, trụ inox 304 hộp 38×38mm'],
+    ['Len chân tường','Nhựa Composite 90mm (hoặc PU, PS, PVC)'],
+    ['Len cầu thang','Gạch / đá / gỗ tùy mặt bậc'],
+    ['Ngạch cửa','Kim Sa Trung / đá trắng sứ'],
+    ['Nẹp kết thúc','Nhôm chữ T'],
+    ['THIẾT BỊ VỆ SINH / NƯỚC',''],
+    ['Bồn cầu điện tử','Inax AC-1032 · nắp điện tử CW-H18VN (phòng Master)'],
+    ['Bàn cầu (nắp rửa cơ)','Inax AC-989VN / CW-S32VN'],
+    ['Tủ lavabo','Enic (vòi Inax) · chậu gốm sứ, tủ ván Plywood, gương đèn led'],
+    ['Vách kính phòng tắm','Enic · vách góc L / cửa lùa xếp, bản lề êm'],
+    ['Bồn tắm nằm','Inax Ocean FBV-1700R (1700×750×400)'],
+    ['Bộ sen cây xả bồn tắm nhiệt độ','Inax BFV-8145T + thân sen BFV-CL2'],
+    ['Vòi sen tắm nhiệt độ','Inax BFV-3413T · tay sen 8C'],
+    ['Vòi xả lavabo nóng lạnh','Inax LFV-1402S-R'],
+    ['Co P thoát nước','Inax A-675PV'],
+    ['Vòi xịt','Inax CFV-105MP'],
+    ['Combo phụ kiện','Inax bằng sứ 6 món (H-AC480V6)'],
+    ['Phễu thu sàn','Ceasar ST1414EL (140×140, Ø90)'],
+    ['Cầu chắn rác ban công/sân thượng','Inox Ceasar F2323'],
+    ['Vòi sân vườn/ban công','Caesar WP037C'],
+    ['Máy bơm nước','Hitachi W-P200NH'],
+    ['Máy bơm tăng áp','Rheken WZB35-400I (không tiếng ồn)'],
+    ['Máy nước nóng gián tiếp','Ariston 30L · ANDRIS2 30 LUX-D AG+'],
+    ['Bồn nước','Tân Á Đại Thành 2000L (+ chân nâng)'],
+    ['ĐÈN, THIẾT BỊ ĐIỆN, MÁY LẠNH',''],
+    ['Đèn spotlight','Osram dimmable 7.5W · 3000–4000k, CRI ≥ 90'],
+    ['Đèn ốp trần ban công','Vinaled IP65 12W · CL-DW12'],
+    ['Đèn cầu thang','Vinaled IP65-3W · SL3-BW3, bóng CREE (USA)'],
+    ['Đèn led hắt trần','Nanoco (nguồn trực tiếp, cuộn 100m)'],
+    ['Dimmer led','Ltech · điều khiển tăng giảm ánh sáng'],
+    ['Công tắc','Panasonic Minerva (đơn/đôi 1 chiều, đơn 2 chiều)'],
+    ['Ổ cắm','Panasonic Minerva (đôi 3 chấu, data Cat6)'],
+    ['Tủ điện âm tường','Panasonic Moderva (tổng 24 đường, tầng 16 đường, sân thượng 8 đường)'],
+    ['Cầu dao (CB)','Panasonic (RCBO 2P1E chống rò · MCB tổng 10kA 2P2E · MCB 1P1E)'],
+    ['Quạt hút WC âm trần','Panasonic FV-15TGU1'],
+    ['Chụp thông gió inox','Vent Cap VT100-304 / VT200-201-C'],
+    ['Đế âm tường chờ ống đồng máy lạnh','Nhựa ABS chống cháy, có nắp che & máng thoát'],
+    ['Ống đồng máy lạnh','Thái Lan dày 7 zem (bảo ôn, co nối, cùm omega)'],
+    ['CÁC HẠNG MỤC KHÁC',''],
+    ['Mái kính mở hắt tự động','AGS AGS-R30 · khung sắt 42×170×2mm, motor dây xích'],
+    ['Vệ sinh bàn giao','Vệ sinh thô (2 lần) + vệ sinh tinh trước bàn giao']
+  ];
+  // Ma trận vật tư: DQ[phân khúc][hạng mục]. rows = danh mục (đã có) · undefined = đang cập nhật · empty:true = để trống
   var DQ = {
-    basic: {
-      tag:'GÓI THÔ', name:'Thô', price:'3.800.000 đ/m²', desc:'Kết cấu + xây tô + M&E + nhân công hoàn thiện',
-      vals:['Insee PCB40 đa dụng','Cát địa phương','Đá Bình Điền hoặc địa phương','Tuynel Bình Dương, Đồng Nai – Loại B','Việt Nhật CB30','Bê tông thương phẩm đá đen (hoặc trộn tại chỗ)','Ván gỗ, ván ép','SikaTop Seal 107','Bình Minh (áp lực ≥ theo thiết kế) · Cấp nước nóng PP-R','Cáp đơn Cadivi CV (vỏ cách điện PVC)','Cat6 FTP Pro','Sino – MPE','Sino Vanlock','Cọc mạ đồng','Không','Composite Đại Thành 1500L']
+    tc: {
+      tho: { price:'3.800.000 đ/m²', desc:'Danh mục vật tư phần thô · Tiêu chuẩn', rows: DQ_THO_TC },
+      ht:  { price:'6.800.000 đ/m²', desc:'Danh mục vật tư hoàn thiện · Tiêu chuẩn', rows: DQ_HT_TC },
+      tg:  { price:'8.400.000 đ/m²', desc:'Danh mục vật tư trọn gói · Tiêu chuẩn', rows: DQ_HT_TC }
     },
-    standard: {
-      tag:'GÓI HOÀN THIỆN', name:'Hoàn thiện cơ bản', price:'6.800.000 đ/m²', desc:'Bao gồm Thô + vật tư hoàn thiện · chưa nội thất',
-      vals:['Insee PCB40 đa dụng','Cát vàng','Đá Đồng Nai hoặc địa phương','Tuynel Bình Dương, Đồng Nai – Loại A','Việt Nhật CB30','Bê tông thương phẩm đá xám (hoặc trộn tại chỗ)','Coppha phủ phim','SikaTop Seal 107','Bình Minh (áp lực ≥ theo thiết kế) · Cấp nước nóng PP-R','Cáp đơn Cadivi CV (vỏ cách điện PVC)','Cat6e FTP Commscope','Sino – MPE','Sino Vanlock','Cọc đồng thau','Có','Composite Đại Thành 2000L']
-    },
-    premium: {
-      tag:'GÓI TRỌN GÓI', name:'Trọn gói', price:'8.400.000 đ/m²', desc:'Bao gồm Thô + Hoàn thiện + nội thất',
-      vals:['Insee Power-S đa dụng','Cát vàng','Đá Đồng Nai hoặc địa phương','Tuynel Bình Dương, Đồng Nai – Loại A','Việt Nhật CB4 hoặc Pomina SD390','BTTP đá xám + phụ gia B6 (hoặc trộn tại chỗ)','Coppha phim hoặc nhôm','SikaTop Seal 109','Bình Minh · Toàn bộ ống cấp PP-R','Cáp đơn Cadivi CV (vỏ cách điện PVC)','Cat6 FTP chống nhiễu','Ống luồn Nanoco','Schneider hoặc Panasonic','Cọc đồng thau','Có','Composite Đại Thành 2500L']
+    cc: {
+      tho: { price:'từ 5.000.000 đ/m²', desc:'Danh mục vật tư phần thô · Cao cấp', rows: DQ_THO_CC },
+      ht:  { price:'từ 10.000.000 đ/m²', desc:'Danh mục vật tư hoàn thiện · Cao cấp', empty:true },
+      tg:  { price:'từ 15.000.000 đ/m²', desc:'Danh mục vật tư trọn gói · Cao cấp', empty:true }
     }
   };
+  var DQ_TYPE_KEY = ['tho','ht','tg'];
+  var DQ_TYPE_NM  = ['Thô','Hoàn thiện cơ bản','Trọn gói'];
+  var DQ_TIER_NM  = { tc:'Tiêu chuẩn', cc:'Cao cấp' };
   var DQ_CUBE = '<svg class="dq-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
   var DQ_NOTES = '<b>Chi phí có thể điều chỉnh theo đặc thù công trình:</b><br>'+
     '• Hẻm nhỏ (dưới 4m): <b>+150.000 – 250.000 đ/m²</b><br>'+
@@ -1322,26 +1437,36 @@
     '• Báo giá mang tính tham khảo, chốt chính thức sau khi thống nhất phạm vi thi công.';
 
   var dqOverlay = document.getElementById('dqOverlay');
-  function openDetail(pkg){
-    var d = DQ[pkg]; if(!d) return;
-    document.getElementById('dqTag').textContent = d.tag;
-    document.getElementById('dqTitle').textContent = 'Gói ' + d.name;
+  function openDetail(tier, type){
+    if (!DQ[tier]) tier = 'tc';
+    var d = DQ[tier][DQ_TYPE_KEY[type]]; if(!d) return;
+    document.getElementById('dqTag').textContent = 'VẬT TƯ · ' + DQ_TIER_NM[tier].toUpperCase();
+    document.getElementById('dqTitle').textContent = 'Gói ' + DQ_TYPE_NM[type];
     document.getElementById('dqPrice').textContent = d.price;
     document.getElementById('dqDesc').textContent = d.desc;
-    // header màu theo brand: nền navy gradient
     document.getElementById('dqHead').style.background = 'linear-gradient(135deg,#1d3d4e,#12242e)';
-    var rows = '';
-    for(var i=0;i<DQ_ITEMS.length;i++){
-      rows += '<div class="dq-row"><div class="k">'+DQ_CUBE+DQ_ITEMS[i]+'</div><div class="v">'+d.vals[i]+'</div></div>';
+    if (d.rows && d.rows.length){
+      var rows = '';
+      for(var i=0;i<d.rows.length;i++){
+        var r = d.rows[i];
+        if (r[1]){
+          rows += '<div class="dq-row"><div class="k">'+DQ_CUBE+r[0]+'</div><div class="v">'+r[1]+'</div></div>';
+        } else {
+          rows += '<div style="margin-top:12px; padding:9px 0 3px; font-size:12px; font-weight:800; letter-spacing:.5px; color:#b3925e; border-top:2px solid #eee7db;">'+r[0]+'</div>';
+        }
+      }
+      document.getElementById('dqBody').innerHTML = rows;
+      document.getElementById('dqNotes').innerHTML = DQ_NOTES;
+    } else {
+      document.getElementById('dqBody').innerHTML = '<div style="padding:34px 6px; text-align:center; color:#7a7267; font-size:14px; line-height:1.65;"><div style="font-size:34px; margin-bottom:10px;">🗂️</div>Danh mục vật tư chi tiết của gói này đang được Decox cập nhật.<br>Vui lòng để lại thông tin để nhận bảng vật tư đầy đủ.</div>';
+      document.getElementById('dqNotes').innerHTML = '';
     }
-    document.getElementById('dqBody').innerHTML = rows;
-    document.getElementById('dqNotes').innerHTML = DQ_NOTES;
     dqOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
   function closeDetail(){ dqOverlay.classList.remove('open'); document.body.style.overflow = ''; }
   Array.prototype.forEach.call(document.querySelectorAll('.btn-detail'), function(btn){
-    btn.addEventListener('click', function(){ openDetail(btn.getAttribute('data-pkg')); });
+    btn.addEventListener('click', function(){ openDetail(cardPk, Number(btn.getAttribute('data-type'))); });
   });
   document.getElementById('dqClose').addEventListener('click', closeDetail);
   document.getElementById('dqCta').addEventListener('click', closeDetail);
@@ -1423,7 +1548,7 @@
     if (fNeed && !fNeed.value.trim()) fNeed.value = need;
     setTimeout(function(){ var fn = document.getElementById('fName'); if (fn) fn.focus(); }, 500);
   });
-  document.getElementById('ktMaterial').addEventListener('click', function(){ closeKt(); openDetail(state.tier === 'cc' ? 'premium' : 'standard'); });
+  document.getElementById('ktMaterial').addEventListener('click', function(){ closeKt(); openDetail(state.tier, state.type); });
   ktOverlay.addEventListener('click', function(e){ if(e.target === ktOverlay) closeKt(); });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeKt(); });
 
