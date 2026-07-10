@@ -772,7 +772,7 @@
       </div>
       <p style="max-width:340px; color:#7a7267; font-size:15px; line-height:1.55;">Các bài viết &amp; công trình được cập nhật trực tiếp từ decoxdesign.com — luôn hiển thị nội dung mới nhất.</p>
     </div>
-    <div id="artGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:22px;">
+    <div id="artGrid" style="display:flex; flex-wrap:wrap; justify-content:center; gap:22px;">
       <div id="artLoading" style="grid-column:1/-1; text-align:center; color:#9a9186; font-size:15px; padding:40px 0;">
         <span class="art-spin" style="display:inline-block; width:22px; height:22px; border:3px solid #e6ddd0; border-top-color:#b3925e; border-radius:50%; vertical-align:-5px; margin-right:10px;"></span>
         Đang tải bài viết mới nhất từ Decox…
@@ -785,7 +785,7 @@
   <style>
     @keyframes artspin{to{transform:rotate(360deg)}}
     .art-spin{animation:artspin .8s linear infinite}
-    .art-card{display:block; text-decoration:none; background:#fff; border-radius:16px; overflow:hidden; border:1px solid #eee5d7; box-shadow:0 10px 30px -22px rgba(0,0,0,.4); transition:transform .3s ease, box-shadow .3s ease;}
+    .art-card{flex:1 1 340px; min-width:280px; max-width:380px; display:block; text-decoration:none; background:#fff; border-radius:16px; overflow:hidden; border:1px solid #eee5d7; box-shadow:0 10px 30px -22px rgba(0,0,0,.4); transition:transform .3s ease, box-shadow .3s ease;}
     .art-card:hover{transform:translateY(-6px); box-shadow:0 26px 46px -26px rgba(31,53,68,.5);}
     .art-card .thumb{position:relative; width:100%; aspect-ratio:16/10; overflow:hidden; background:#f2ece1;}
     .art-card .thumb img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease;}
@@ -798,8 +798,8 @@
   <script>
   (function(){
     var BASE='https://decoxdesign.com/';
-    var SOURCES=[BASE+'tieu-chuan-thi-cong-hang-a', BASE];
-    var MAX=9;
+    var SOURCES=[BASE+'tieu-chuan-thi-cong-hang-a'];
+    var MAX=6;
     function abs(u){ try{ return new URL(u, BASE).href; }catch(e){ return u; } }
     function parseCards(htmlText){
       var doc=new DOMParser().parseFromString(htmlText,'text/html');
@@ -844,13 +844,8 @@
         render(all.slice(0,MAX));
       }).catch(fallback);
     }
-    if('IntersectionObserver' in window){
-      var sec=document.getElementById('duan'), done=false;
-      var io=new IntersectionObserver(function(en){
-        en.forEach(function(e){ if(e.isIntersecting && !done){ done=true; io.disconnect(); load(); } });
-      },{rootMargin:'300px'});
-      io.observe(sec);
-    } else { load(); }
+    if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', load); }
+    else { load(); }
   })();
   </script>
 
