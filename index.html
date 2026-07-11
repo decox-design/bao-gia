@@ -598,9 +598,9 @@
         <span style="font-size:14px; font-weight:600; color:#57503f;">Kéo mức đơn giá dự kiến của bạn</span>
         <span style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-weight:700; color:#193544;"><span id="budgetValue" style="font-size:26px;">6.800.000</span> <span style="font-size:14px; color:#7a7267;">đ/m²</span></span>
       </div>
-      <input id="budgetRange" type="range" min="3800000" max="9600000" step="100000" value="6800000" style="width:100%; accent-color:#b3925e; cursor:pointer;">
+      <input id="budgetRange" type="range" min="3800000" max="9000000" step="100000" value="6800000" style="width:100%; accent-color:#b3925e; cursor:pointer;">
       <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:12px; color:#9a9082;">
-        <span id="budgetLo">3,8tr</span><span>Hoàn thiện</span><span id="budgetHi">9,6tr</span>
+        <span id="budgetLo">3,8tr</span><span>Hoàn thiện</span><span id="budgetHi">9tr</span>
       </div>
       <div style="margin-top:16px; text-align:center; font-size:14.5px; color:#4a4438;">Gói phù hợp với ngân sách: <b id="budgetPkgName" style="color:#193544;">Hoàn thiện cơ bản</b></div>
     </div>
@@ -1221,7 +1221,7 @@
   };
   // Dải giá + ngưỡng chia gói theo từng phân khúc
   var BUDGET_CFG = {
-    tc: { min: 3800000,  max: 9600000,  def: 6800000,  step: 100000, t1: 5700000,  t2: 8100000,  lo: '3,8tr', hi: '9,6tr' },
+    tc: { min: 3800000,  max: 9000000,  def: 6800000,  step: 100000, t1: 5200000,  t2: 7200000,  lo: '3,8tr', hi: '9tr' },
     cc: { min: 5000000,  max: 30000000, def: 10000000, step: 500000, t1: 7000000,  t2: 15000000, lo: '5tr',   hi: '30tr' }
   };
   function applyBudget(){
