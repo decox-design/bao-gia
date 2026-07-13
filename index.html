@@ -520,8 +520,12 @@
         </div>
         <p style="font-size:13px; color:#7a7267; margin-bottom:20px;">Con số tham khảo trong 15 giây</p>
 
-        <label style="display:block; font-size:13px; font-weight:600; color:#57503f; margin-bottom:9px;">Diện tích 1 sàn (m²) · <span style="color:#b3925e; font-weight:700;"><span id="areaLabel">80</span> m²</span></label>
-        <input id="areaRange" type="range" min="30" max="200" step="5" value="80" style="width:100%; accent-color:#b3925e; margin-bottom:20px; cursor:pointer;">
+        <label style="display:block; font-size:13px; font-weight:600; color:#57503f; margin-bottom:9px;">Diện tích đất (m²) · <span style="color:#b3925e; font-weight:700;"><span id="landLabel">80</span> m²</span></label>
+        <input id="areaRange" type="range" min="30" max="200" step="5" value="80" style="width:100%; accent-color:#b3925e; margin-bottom:18px; cursor:pointer;">
+
+        <label style="display:block; font-size:13px; font-weight:600; color:#57503f; margin-bottom:9px;">Mật độ xây dựng · <span style="color:#b3925e; font-weight:700;"><span id="densityLabel">100</span>%</span></label>
+        <input id="densityRange" type="range" min="50" max="100" step="5" value="100" style="width:100%; accent-color:#b3925e; margin-bottom:10px; cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#f6f2ea; border-radius:10px; padding:9px 14px; margin-bottom:20px; font-size:13px;"><span style="color:#57503f;">Diện tích xây dựng 1 sàn</span><b style="color:#193544;"><span id="footprintLabel">80</span> m²</b></div>
 
         <label style="display:block; font-size:13px; font-weight:600; color:#57503f; margin-bottom:9px;">Số tầng</label>
         <div style="display:flex; align-items:center; gap:14px; margin-bottom:20px;">
@@ -1139,7 +1143,7 @@
   var CARD_NAMES = ['Thô', 'Hoàn thiện cơ bản', 'Trọn gói'];
 
   // ---- State ----
-  var state = { area: 80, floors: 3, ham: 0, lung: 0, tum: 0, st: 0, tier: 'tc', type: 1, level: 0, filter: 'all', hesoOpen: false };
+  var state = { land: 80, density: 100, area: 80, floors: 3, ham: 0, lung: 0, tum: 0, st: 0, tier: 'tc', type: 1, level: 0, filter: 'all', hesoOpen: false };
   var lastCalc = { heso: 3.5, dt: 280, gia: 6800000, total: 1904000000, isTC: true };
 
   // ---- Helpers ----
@@ -1173,6 +1177,7 @@
 
   function renderCalc(){
     var s = state;
+    s.area = Math.round(s.land * s.density / 100);   // Diện tích xây dựng 1 sàn = đất × mật độ
     // Hệ số diện tích xây dựng — theo bảng chuẩn Decox:
     var HS_MONG = 0.5;    // Móng — LUÔN cộng 50%
     var HS_MAI  = s.tum > 0 ? 0.15 : 0.50;   // Mái BTCT: KHÔNG tum → 50% sàn · CÓ tum → DT tum × 50% (= 15% sàn)
@@ -1187,7 +1192,9 @@
     var pre = isTC ? '' : 'từ ';
     lastCalc = { heso: heso, dt: dt, gia: gia, total: total, isTC: isTC };
 
-    $('areaLabel').textContent = s.area;
+    $('landLabel').textContent = s.land;
+    $('densityLabel').textContent = s.density;
+    $('footprintLabel').textContent = s.area;
     $('floorLabel').textContent = s.floors;
     $('hesoText').textContent = heso.toLocaleString('vi-VN', { maximumFractionDigits: 1 });
     $('dtText').textContent = dt.toLocaleString('vi-VN', { maximumFractionDigits: 0 });
@@ -1390,7 +1397,8 @@
   applyBudget();   // khởi tạo
   renderThoCard(); // khởi tạo card Thô lướt giá
 
-  $('areaRange').addEventListener('input', function(e){ state.area = Number(e.target.value); renderCalc(); });
+  $('areaRange').addEventListener('input', function(e){ state.land = Number(e.target.value); renderCalc(); });
+  $('densityRange').addEventListener('input', function(e){ state.density = Number(e.target.value); renderCalc(); });
   $('incFloor').addEventListener('click', function(){ state.floors = Math.min(state.floors + 1, 6); renderCalc(); });
   $('decFloor').addEventListener('click', function(){ state.floors = Math.max(state.floors - 1, 1); renderCalc(); });
   Array.prototype.forEach.call(document.querySelectorAll('.ham-btn'), function(btn){
@@ -1853,7 +1861,9 @@
     document.getElementById('ktSub').textContent = 'Gói ' + TYPE_FULL[s.type] + ' · Phân khúc ' + TIER_FULL[s.tier];
 
     // Thông số đầu vào
-    var head = '<div style="display:flex; justify-content:space-between; font-size:13px; color:#7a7267; padding:4px 0;"><span>Diện tích 1 sàn</span><b style="color:#193544;">' + s.area + ' m²</b></div>' +
+    var head = '<div style="display:flex; justify-content:space-between; font-size:13px; color:#7a7267; padding:4px 0;"><span>Diện tích đất</span><b style="color:#193544;">' + s.land + ' m²</b></div>' +
+               '<div style="display:flex; justify-content:space-between; font-size:13px; color:#7a7267; padding:4px 0;"><span>Mật độ xây dựng</span><b style="color:#193544;">' + s.density + '%</b></div>' +
+               '<div style="display:flex; justify-content:space-between; font-size:13px; color:#7a7267; padding:4px 0;"><span>Diện tích xây dựng 1 sàn</span><b style="color:#193544;">' + s.area + ' m²</b></div>' +
                '<div style="display:flex; justify-content:space-between; font-size:13px; color:#7a7267; padding:4px 0;"><span>Quy mô</span><b style="color:#193544;">' + quyMoText() + '</b></div>' +
                '<div style="display:flex; justify-content:space-between; font-size:13px; color:#7a7267; padding:4px 0;"><span>Đơn giá (' + TYPE_FULL[s.type] + ' · ' + TIER_FULL[s.tier] + ')</span><b style="color:#193544;">' + pre + vnd(c.gia) + ' đ/m²</b></div>';
 
@@ -1908,7 +1918,7 @@
   document.getElementById('ktLead').addEventListener('click', function(){
     closeKt();
     var c = lastCalc, s = state;
-    var need = 'Diện tích 1 sàn ' + s.area + 'm² · ' + quyMoText() + ' · Gói ' + TYPE_FULL[s.type] + ' (' + TIER_FULL[s.tier] + ') · Chi phí dự kiến ' + (c.isTC ? '≈ ' : 'từ ') + fmtTy(c.total);
+    var need = 'Đất ' + s.land + 'm² · mật độ ' + s.density + '% · XD 1 sàn ' + s.area + 'm² · ' + quyMoText() + ' · Gói ' + TYPE_FULL[s.type] + ' (' + TIER_FULL[s.tier] + ') · Chi phí dự kiến ' + (c.isTC ? '≈ ' : 'từ ') + fmtTy(c.total);
     var fNeed = document.getElementById('fNeed');
     if (fNeed && !fNeed.value.trim()) fNeed.value = need;
     setTimeout(function(){ var fn = document.getElementById('fName'); if (fn) fn.focus(); }, 500);
