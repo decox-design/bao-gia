@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Báo giá thi công Decox · Chọn loại công trình</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; color:#2b2620; background:#ffffff; -webkit-font-smoothing:antialiased; }
+  ::selection { background:#b3925e; color:#fff; }
+  input, button, textarea { font-family:inherit; }
+  @keyframes floatIn { from { opacity:0; transform:translateY(16px);} to {opacity:1; transform:translateY(0);} }
+  @keyframes pulseGold { 0%,100%{ box-shadow:0 0 0 0 rgba(179,146,94,.5);} 50%{ box-shadow:0 0 0 10px rgba(179,146,94,0);} }
+
+  /* ---- Floating hotline tooltip ---- */
+  .hotline-wrap { position:relative; display:flex; align-items:center; }
+  .hotline-tip {
+    position:absolute; right:70px; top:50%; transform:translateY(-50%) scale(.9);
+    white-space:nowrap; background:#fff; color:#193544; font-weight:800; font-size:18px;
+    letter-spacing:.5px; padding:12px 22px; border-radius:999px;
+    box-shadow:0 8px 24px rgba(25,53,68,.22); pointer-events:none;
+    opacity:0; visibility:hidden; transition:opacity .25s ease, transform .25s ease;
+  }
+  .hotline-wrap:hover .hotline-tip { opacity:1; visibility:visible; transform:translateY(-50%) scale(1); }
+  .hotline-tip.tip-open { opacity:1; visibility:visible; transform:translateY(-50%) scale(1); }
+
+  /* ---- Calculator option buttons (segmented) ---- */
+  .opt-label { display:block; font-size:12.5px; font-weight:600; color:#57503f; margin-bottom:8px; }
+  .opt-row { display:flex; gap:7px; margin-bottom:16px; }
+  .opt-btn { flex:1; padding:12px 6px; border-radius:12px; cursor:pointer; text-align:center; border:1.5px solid #e6ddcd; background:#faf8f4; font-size:13px; font-weight:700; color:#193544; font-family:inherit; transition:border-color .18s ease, background .18s ease, color .18s ease, box-shadow .18s ease; }
+  .opt-btn.on { border-color:#193544; background:#193544; color:#fff; box-shadow:0 6px 16px -8px rgba(25,53,68,.6); }
+  /* Checkbox chip (Tầng lửng / tum / sân thượng) */
+  .chk { flex:1; display:flex; align-items:center; gap:8px; padding:11px 10px; border-radius:12px; border:1.5px solid #e6ddcd; background:#faf8f4; cursor:pointer; font-size:12.5px; font-weight:700; color:#193544; user-select:none; transition:border-color .18s ease, background .18s ease; }
+  .chk:hover { border-color:#cdb98f; }
+  .chk input { position:absolute; opacity:0; width:0; height:0; }
+  .chk .box { width:20px; height:20px; flex-shrink:0; border-radius:6px; border:2px solid #c4b89e; background:#fff; display:flex; align-items:center; justify-content:center; transition:background .15s ease, border-color .15s ease; }
+  .chk .box svg { width:13px; height:13px; opacity:0; transform:scale(.5); transition:opacity .15s ease, transform .15s ease; }
+  .chk.on { border-color:#193544; background:#eef2f4; }
+  .chk.on .box { background:#193544; border-color:#193544; }
+  .chk.on .box svg { opacity:1; transform:scale(1); }
+  .chk input:focus-visible + .box { box-shadow:0 0 0 3px rgba(179,146,94,.45); }
+
+  /* ---- Pricing cards: dynamic hover ---- */
+  .price-card { position:relative; background:#fff; display:flex; flex-direction:column; transition: transform .32s cubic-bezier(.2,.7,.2,1), background .3s ease, box-shadow .32s ease, border-color .32s ease, opacity .32s ease; }
+  /* Màu chữ mặc định trong card (nền trắng) */
+  .p-eyebrow { font-size:14px; font-weight:700; letter-spacing:1px; color:#7a7267; margin-bottom:6px; }
+  .p-sub { font-size:14px; color:#7a7267; margin-bottom:18px; min-height:57px; }
+  .p-price-row { display:flex; align-items:baseline; gap:6px; margin-bottom:22px; }
+  .p-price { font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:38px; font-weight:700; color:#193544; }
+  .p-unit { color:#7a7267; font-size:15px; }
+  .p-feats { display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:#4a4438; line-height:1.4; margin-bottom:24px; }
+  .p-feats b { color:#193544; }
+  /* Badge "Gợi ý cho bạn" (giữ nguyên) */
+  .suggest-badge { position:absolute; top:14px; right:14px; background:#2f6fed; color:#fff; font-size:11px; font-weight:700; padding:5px 11px; border-radius:999px; opacity:0; transform:scale(.8); transition:opacity .25s ease, transform .25s ease; pointer-events:none; z-index:3; box-shadow:0 4px 12px rgba(47,111,237,.45); }
+  /* Gói đang phù hợp → chuyển sang NỀN XANH DƯƠNG (navy) nổi bật */
+  .card-active { background:#193544 !important; border-color:#193544 !important; box-shadow:0 26px 54px -18px rgba(22,19,15,.55) !important; }
+  .card-active .suggest-badge { opacity:1; transform:scale(1); }
+  .card-active .p-eyebrow { color:#d9bd93; }
+  .card-active .p-sub { color:#a89c88; }
+  .card-active .p-price { color:#fff; }
+  .card-active .p-unit { color:#a89c88; }
+  .card-active .p-feats { color:#cabfae; }
+  .card-active .p-feats b { color:#fff; }
+  .card-active .btn-detail { background:#b3925e !important; border-color:#b3925e !important; color:#fff !important; }
+  /* 3 card ngang hàng — không nhô lệch. Chỉ nhấc nhẹ khi rê chuột */
+  .price-card:hover { transform: translateY(-8px); box-shadow: 0 28px 56px -20px rgba(22,19,15,.5); }
+  .art-banner img { transition: transform .55s ease; }
+  .art-banner:hover img { transform: scale(1.045); }
+  /* Tabs phân khúc (lướt Tiêu chuẩn ↔ Cao cấp) */
+  .pk-tabs { display:inline-flex; background:#efeae1; border-radius:999px; padding:4px; gap:4px; }
+  .pk-tab { border:none; background:none; padding:9px 24px; border-radius:999px; font-size:14px; font-weight:700; color:#7a7267; cursor:pointer; font-family:inherit; transition:background .2s, color .2s; }
+  .pk-tab.on { background:#193544; color:#fff; box-shadow:0 5px 14px -6px rgba(25,53,68,.6); }
+  .pk-arrow { width:38px; height:38px; flex-shrink:0; border-radius:50%; border:1.5px solid #d8cfbe; background:#fff; color:#193544; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:border-color .2s, background .2s; }
+  .pk-arrow:hover { border-color:#b3925e; background:#faf6ef; }
+  .p-from { display:none; font-size:16px; font-weight:600; color:#7a7267; align-self:center; margin-right:2px; }
+  .card-active .p-from { color:#a89c88; }
+  .price-grid { transition: opacity .22s ease; }
+  .price-grid.swapping { opacity:0; }
+  .btn-detail { display:block; width:100%; margin-top:auto; text-align:center; padding:13px; border-radius:12px; font-weight:600; font-size:14px; cursor:pointer; font-family:inherit; transition:filter .2s ease, transform .15s ease; }
+  .btn-detail:hover { filter:brightness(1.06); transform:translateY(-1px); }
+  .btn-detail:active { transform:translateY(0); }
+
+  /* ---- Detailed quote modal ---- */
+  .dq-overlay { position:fixed; inset:0; background:rgba(12,22,29,.62); backdrop-filter:blur(3px); display:none; align-items:flex-start; justify-content:center; z-index:200; padding:36px 16px; overflow-y:auto; opacity:0; transition:opacity .25s ease; }
+  .dq-overlay.open { display:flex; opacity:1; }
+  .dq-modal { background:#fff; border-radius:20px; max-width:760px; width:100%; box-shadow:0 30px 90px rgba(0,0,0,.4); overflow:hidden; transform:translateY(20px) scale(.98); transition:transform .3s cubic-bezier(.2,.7,.2,1); }
+  .dq-overlay.open .dq-modal { transform:translateY(0) scale(1); }
+  .dq-head { padding:26px 30px; color:#fff; position:relative; }
+  .dq-close { position:absolute; top:18px; right:18px; width:34px; height:34px; border-radius:50%; border:none; background:rgba(255,255,255,.18); color:#fff; font-size:20px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+  .dq-close:hover { background:rgba(255,255,255,.32); }
+  .dq-body { max-height:56vh; overflow-y:auto; padding:8px 30px 4px; }
+  .dq-row { display:grid; grid-template-columns:150px 1fr; gap:14px; padding:12px 0; border-bottom:1px solid #eee7db; align-items:start; }
+  .dq-row:last-child { border-bottom:none; }
+  .dq-row .k { font-weight:700; color:#193544; font-size:13.5px; display:flex; align-items:center; gap:9px; }
+  .dq-row .v { color:#4a4438; font-size:13.5px; line-height:1.5; }
+  .dq-ico { color:#b3925e; flex-shrink:0; display:inline-flex; }
+  .tho-price-nav { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .tho-price-nav .p-price-row { margin:0; flex:1; min-width:0; }
+  .tho-arrow { width:34px; height:34px; border-radius:50%; border:1.5px solid #e0d6c4; background:#fff; color:#8a6f43; font-size:19px; line-height:1; cursor:pointer; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; transition:all .16s; padding:0; font-family:inherit; box-shadow:0 3px 8px -4px rgba(0,0,0,.25); }
+  .tho-arrow:hover { background:#b3925e; border-color:#b3925e; color:#fff; }
+  .tho-arrow:active { transform:scale(.92); }
+  .tho-meta { display:flex; align-items:center; gap:10px; margin:0 0 20px; font-size:11.5px; font-weight:600; color:#a89c88; letter-spacing:.2px; }
+  .tho-dots { display:inline-flex; gap:5px; }
+  .tho-dots i { width:6px; height:6px; border-radius:50%; background:#ddd3c3; display:inline-block; transition:all .2s; }
+  .tho-dots i.on { background:#b3925e; width:18px; border-radius:3px; }
+  .nav-drop { position:relative; }
+  .nav-drop-menu { position:absolute; top:100%; left:-16px; padding-top:12px; opacity:0; visibility:hidden; transform:translateY(6px); transition:all .18s ease; z-index:60; }
+  .nav-drop:hover .nav-drop-menu { opacity:1; visibility:visible; transform:translateY(0); }
+  .nav-drop-menu .nav-drop-card { background:#fff; border-radius:12px; box-shadow:0 22px 46px -18px rgba(0,0,0,.5); padding:8px; min-width:210px; }
+  .nav-drop-menu a { display:block; padding:11px 14px; border-radius:8px; color:#193544; text-decoration:none; font-size:14px; font-weight:600; white-space:nowrap; }
+  .nav-drop-menu a:hover { background:#f2ece1; color:#b3925e; }
+  .nav-drop-menu a.on { color:#b3925e; }
+  .dq-notes { background:#f6f2ea; padding:18px 30px 22px; font-size:12.5px; color:#6a6355; line-height:1.7; }
+  .dq-notes b { color:#193544; }
+  .dq-foot { padding:18px 30px 24px; display:flex; gap:12px; flex-wrap:wrap; }
+  .dq-cta { flex:1; min-width:200px; text-align:center; background:#b3925e; color:#fff; padding:15px; border-radius:12px; font-weight:700; font-size:14.5px; text-decoration:none; transition:filter .2s; }
+  .dq-cta:hover { filter:brightness(1.07); }
+  @media (max-width:560px){ .dq-row{ grid-template-columns:1fr; gap:3px; } .dq-body,.dq-head,.dq-notes,.dq-foot{ padding-left:20px; padding-right:20px; } }
+
+  /* ---- Responsive ---- */
+  @media (max-width:960px){
+    .hero-grid { grid-template-columns:1fr !important; gap:36px !important; padding-top:44px !important; padding-bottom:48px !important; }
+    .hero-h1 { font-size:38px !important; }
+    .trust-grid { grid-template-columns:repeat(2,1fr) !important; }
+    .price-grid, .hangmuc-grid, .commit-grid, .projects-grid { grid-template-columns:1fr !important; }
+    .price-featured { transform:none !important; }
+    .quy-grid { grid-template-columns:repeat(2,1fr) !important; }
+    .tiendo-grid, .about-grid, .form-grid, .consult-grid { grid-template-columns:1fr !important; }
+    .about-stats { grid-template-columns:1fr 1fr !important; }
+    .section-h2 { font-size:30px !important; }
+  }
+  @media (max-width:640px){
+    .main-nav, .header-phone { display:none !important; }
+    .trust-grid { grid-template-columns:1fr !important; }
+    .quy-grid { grid-template-columns:1fr !important; }
+    .gallery-grid { grid-template-columns:1fr !important; grid-template-rows:none !important; }
+    .gallery-grid > div { grid-row:auto !important; min-height:200px; }
+  }
+</style>
+</head>
+<body>
+<div style="max-width:100vw; overflow-x:hidden;">
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="decoxLogo" viewBox="0 0 260 55"><style type="text/css">
+	.st0{fill:#FFFFFF;}
+	.st1{fill:url(#SVGID_5_);}
+	.st2{fill:#002430;}
+	.st3{fill:#231F20;}
+	.st4{fill:url(#SVGID_6_);}
+	.st5{fill:#00273D;}
+	.st6{fill:url(#SVGID_7_);}
+	.st7{fill:#FFBC00;}
+	.st8{fill:#FBB03B;}
+	.st9{fill:#F7931E;}
+	.st10{fill:url(#SVGID_8_);}
+	.st11{fill:#0E222D;}
+	.st12{fill:#F6921E;}
+	.st13{fill:#173645;}
+	.st14{fill:none;}
+	.st15{fill:#AD5C1A;}
+	.st16{fill:url(#SVGID_9_);}
+	.st17{fill:url(#SVGID_10_);}
+	.st18{fill:url(#SVGID_11_);}
+	.st19{fill:url(#SVGID_12_);}
+	.st20{fill:#E3E4E5;}
+	.st21{fill:#D42E5C;}
+	.st22{fill:url(#SVGID_13_);}
+	.st23{fill:url(#SVGID_14_);}
+	.st24{fill:url(#SVGID_15_);}
+	.st25{fill:url(#SVGID_16_);}
+	.st26{fill:url(#SVGID_17_);}
+	.st27{fill:url(#SVGID_18_);}
+	.st28{fill:url(#SVGID_19_);}
+	.st29{fill:url(#SVGID_20_);}
+	.st30{fill:url(#SVGID_21_);}
+	.st31{fill:url(#SVGID_22_);}
+	.st32{fill:url(#SVGID_23_);}
+	.st33{fill:url(#SVGID_24_);}
+	.st34{fill:#00273C;}
+	.st35{fill:#C7B299;}
+	.st36{fill:#0E233B;}
+	.st37{fill:#1A2222;}
+	.st38{fill:url(#SVGID_29_);}
+	.st39{fill:url(#SVGID_30_);}
+	.st40{fill:url(#SVGID_31_);}
+	.st41{fill:url(#SVGID_32_);}
+	.st42{fill:url(#SVGID_33_);}
+	.st43{fill:url(#SVGID_34_);}
+	.st44{fill:url(#SVGID_35_);}
+	.st45{fill:url(#SVGID_36_);}
+	.st46{fill:url(#SVGID_37_);}
+	.st47{fill:url(#SVGID_38_);}
+	.st48{fill:url(#SVGID_39_);}
+	.st49{fill:url(#SVGID_40_);}
+	.st50{fill:url(#SVGID_41_);}
+	.st51{fill:url(#SVGID_42_);}
+	.st52{fill:url(#SVGID_43_);}
+	.st53{fill:url(#SVGID_44_);}
+	.st54{fill:url(#SVGID_45_);}
+	.st55{fill:url(#SVGID_46_);}
+	.st56{fill:url(#SVGID_47_);}
+	.st57{fill:url(#SVGID_48_);}
+	.st58{fill:url(#SVGID_49_);}
+	.st59{fill:url(#SVGID_50_);}
+	.st60{fill:url(#SVGID_51_);}
+	.st61{fill:url(#SVGID_52_);}
+	.st62{fill:url(#SVGID_53_);}
+	.st63{fill:url(#SVGID_54_);}
+	.st64{fill:url(#SVGID_55_);}
+	.st65{fill:url(#SVGID_56_);}
+	.st66{fill:url(#SVGID_57_);}
+	.st67{fill:url(#SVGID_58_);}
+	.st68{fill:url(#SVGID_59_);}
+	.st69{fill:url(#SVGID_60_);}
+	.st70{fill:url(#SVGID_61_);}
+	.st71{fill:url(#SVGID_62_);}
+	.st72{fill:url(#SVGID_63_);}
+	.st73{fill:url(#SVGID_64_);}
+	.st74{fill:url(#SVGID_65_);}
+	.st75{fill:url(#SVGID_66_);}
+	.st76{fill:url(#SVGID_67_);}
+	.st77{fill:url(#SVGID_68_);}
+	.st78{fill:url(#SVGID_69_);}
+	.st79{fill:url(#SVGID_70_);}
+	.st80{fill:url(#SVGID_71_);}
+	.st81{fill:url(#SVGID_72_);}
+	.st82{fill:url(#SVGID_73_);}
+	.st83{fill:url(#SVGID_74_);}
+	.st84{fill:url(#SVGID_75_);}
+	.st85{fill:url(#SVGID_76_);}
+	.st86{fill:url(#SVGID_77_);}
+	.st87{fill:url(#SVGID_78_);}
+	.st88{fill:url(#SVGID_79_);}
+	.st89{fill:url(#SVGID_80_);}
+	.st90{fill:url(#SVGID_81_);}
+	.st91{fill:url(#SVGID_82_);}
+	.st92{fill:url(#SVGID_83_);}
+	.st93{fill:url(#SVGID_84_);}
+	.st94{fill:url(#SVGID_85_);}
+	.st95{fill:url(#SVGID_86_);}
+	.st96{fill:url(#SVGID_87_);}
+	.st97{fill:url(#SVGID_88_);}
+	.st98{fill:url(#SVGID_89_);}
+	.st99{fill:url(#SVGID_90_);}
+	.st100{fill:url(#SVGID_91_);}
+	.st101{fill:url(#SVGID_92_);}
+	.st102{fill:url(#SVGID_93_);}
+	.st103{fill:url(#SVGID_94_);}
+	.st104{fill:url(#SVGID_95_);}
+	.st105{fill:url(#SVGID_96_);}
+	.st106{fill:url(#SVGID_97_);}
+	.st107{fill:url(#SVGID_98_);}
+	.st108{fill:url(#SVGID_99_);}
+	.st109{fill:url(#SVGID_100_);}
+	.st110{fill:url(#SVGID_101_);}
+	.st111{fill:url(#SVGID_102_);}
+	.st112{fill:url(#SVGID_103_);}
+	.st113{fill:url(#SVGID_104_);}
+	.st114{fill:url(#SVGID_105_);}
+	.st115{fill:url(#SVGID_106_);}
+	.st116{fill:url(#SVGID_107_);}
+	.st117{fill:url(#SVGID_108_);}
+	.st118{fill:url(#SVGID_109_);}
+	.st119{fill:url(#SVGID_110_);}
+	.st120{fill:url(#SVGID_111_);}
+	.st121{fill:url(#SVGID_112_);}
+	.st122{fill:url(#SVGID_113_);}
+	.st123{fill:url(#SVGID_114_);}
+	.st124{fill:url(#SVGID_115_);}
+	.st125{fill:url(#SVGID_116_);}
+	.st126{fill:url(#SVGID_117_);}
+	.st127{fill:url(#SVGID_118_);}
+	.st128{fill:url(#SVGID_119_);}
+	.st129{fill:url(#SVGID_120_);}
+	.st130{fill:url(#SVGID_121_);}
+	.st131{fill:url(#SVGID_122_);}
+	.st132{fill:url(#SVGID_123_);}
+	.st133{fill:url(#SVGID_124_);}
+	.st134{fill:url(#SVGID_125_);}
+	.st135{fill:url(#SVGID_126_);}
+	.st136{fill:url(#SVGID_127_);}
+	.st137{fill:url(#SVGID_128_);}
+	.st138{fill:url(#SVGID_131_);}
+	.st139{fill:url(#SVGID_132_);}
+	.st140{fill:url(#SVGID_133_);}
+	.st141{fill:url(#SVGID_134_);}
+	.st142{fill:url(#SVGID_135_);}
+	.st143{fill:url(#SVGID_136_);}
+	.st144{fill:url(#SVGID_137_);}
+	.st145{fill:url(#SVGID_138_);}
+	.st146{fill:url(#SVGID_139_);}
+	.st147{fill:url(#SVGID_140_);}
+	.st148{fill:url(#SVGID_141_);}
+	.st149{fill:#422100;}
+	.st150{fill:#030000;}
+	.st151{fill:#FFFFFF;stroke:url(#SVGID_142_);stroke-miterlimit:10;}
+	.st152{fill:url(#SVGID_143_);}
+	.st153{fill:url(#SVGID_144_);}
+	.st154{fill:url(#SVGID_145_);}
+	.st155{fill:url(#SVGID_146_);}
+	.st156{fill:url(#SVGID_147_);}
+	.st157{fill:url(#SVGID_148_);}
+	.st158{fill:url(#SVGID_149_);}
+	.st159{fill:url(#SVGID_150_);}
+	.st160{fill:url(#SVGID_151_);}
+	.st161{fill:url(#SVGID_152_);}
+	.st162{fill:url(#SVGID_153_);}
+	.st163{fill:url(#SVGID_154_);}
+	.st164{fill:url(#SVGID_155_);}
+	.st165{fill:url(#SVGID_156_);}
+	.st166{fill:url(#SVGID_157_);}
+	.st167{fill:url(#SVGID_158_);}
+	.st168{fill:url(#SVGID_159_);}
+	.st169{fill:url(#SVGID_160_);}
+	.st170{fill:url(#SVGID_161_);}
+	.st171{fill:url(#SVGID_162_);}
+	.st172{fill:url(#SVGID_163_);}
+	.st173{fill:url(#SVGID_164_);}
+	.st174{fill:url(#SVGID_165_);}
+	.st175{fill:url(#SVGID_166_);}
+	.st176{fill:url(#SVGID_167_);}
+	.st177{fill:url(#SVGID_168_);}
+	.st178{fill:url(#SVGID_169_);}
+	.st179{fill:url(#SVGID_170_);}
+	.st180{fill:url(#SVGID_171_);}
+	.st181{fill:url(#SVGID_172_);}
+	.st182{fill:url(#SVGID_173_);}
+	.st183{fill:url(#SVGID_174_);}
+	.st184{fill:url(#SVGID_175_);}
+	.st185{fill:url(#SVGID_176_);}
+	.st186{fill:url(#SVGID_177_);}
+	.st187{fill:url(#SVGID_178_);}
+	.st188{fill:url(#SVGID_179_);}
+	.st189{fill:#FFFFFF;stroke:url(#SVGID_180_);stroke-miterlimit:10;}
+	.st190{fill:url(#SVGID_181_);}
+	.st191{fill:url(#SVGID_182_);}
+	.st192{fill:url(#SVGID_183_);}
+	.st193{fill:url(#SVGID_184_);}
+	.st194{fill:url(#SVGID_185_);}
+	.st195{fill:url(#SVGID_186_);}
+	.st196{fill:url(#SVGID_187_);}
+	.st197{fill:url(#SVGID_188_);}
+	.st198{fill:url(#SVGID_189_);}
+	.st199{fill:url(#SVGID_190_);}
+	.st200{fill:url(#SVGID_191_);}
+	.st201{fill:url(#SVGID_192_);}
+	.st202{fill:url(#SVGID_193_);}
+	.st203{fill:url(#SVGID_194_);}
+	.st204{fill:url(#SVGID_195_);}
+	.st205{fill:url(#SVGID_196_);}
+	.st206{fill:url(#SVGID_197_);}
+	.st207{fill:url(#SVGID_198_);}
+	.st208{fill:url(#SVGID_199_);}
+	.st209{fill:url(#SVGID_200_);}
+	.st210{fill:url(#SVGID_201_);}
+	.st211{fill:url(#SVGID_202_);}
+	.st212{fill:url(#SVGID_203_);}
+</style>
+<g>
+	<g>
+		<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="-11.5121" y1="110.6842" x2="308.4879" y2="-26.3158">
+			<stop  offset="0" style="stop-color:#CB8A2C"/>
+			<stop  offset="5.911693e-02" style="stop-color:#D19945"/>
+			<stop  offset="0.2977" style="stop-color:#E9D1A4"/>
+			<stop  offset="0.405" style="stop-color:#F3E7CA"/>
+			<stop  offset="0.4771" style="stop-color:#F1E3C3"/>
+			<stop  offset="0.5821" style="stop-color:#EDD7B0"/>
+			<stop  offset="0.7072" style="stop-color:#E6C590"/>
+			<stop  offset="0.8478" style="stop-color:#DCAA63"/>
+			<stop  offset="1" style="stop-color:#CF892B"/>
+		</linearGradient>
+		<path style="fill:url(#SVGID_2_);" d="M210.1,27.5c0,3.8-0.7,7.3-2.2,10.6c-1.5,3.3-3.4,6.2-5.9,8.6c-2.5,2.5-5.3,4.4-8.7,5.8
+			c-3.3,1.4-6.9,2.1-10.6,2.1c-3.8,0-7.3-0.7-10.6-2.1c-3.3-1.4-6.2-3.4-8.6-5.8c-2.5-2.5-4.4-5.3-5.8-8.6
+			c-1.4-3.3-2.1-6.8-2.1-10.6c0-3.8,0.7-7.3,2.1-10.7c1.4-3.3,3.4-6.2,5.8-8.7c2.5-2.5,5.3-4.4,8.6-5.8c3.3-1.4,6.8-2.1,10.6-2.1
+			c3.7,0,7.3,0.7,10.6,2.1c3.3,1.4,6.2,3.4,8.7,5.8c2.5,2.5,4.4,5.4,5.9,8.7C209.4,20.2,210.1,23.7,210.1,27.5z M182.8,11.4
+			c-2.2,0-4.3,0.4-6.2,1.3c-1.9,0.9-3.6,2-5.1,3.5c-1.5,1.5-2.6,3.2-3.5,5.1c-0.9,1.9-1.3,4-1.3,6.2c0,2.2,0.4,4.3,1.3,6.2
+			c0.9,1.9,2,3.6,3.5,5.1c1.4,1.5,3.1,2.6,5.1,3.5c1.9,0.9,4,1.3,6.2,1.3c2.2,0,4.3-0.4,6.2-1.3c1.9-0.9,3.6-2,5.1-3.5
+			c1.5-1.4,2.6-3.1,3.4-5.1c0.8-1.9,1.3-4,1.3-6.2c0-2.2-0.4-4.3-1.3-6.2c-0.8-1.9-2-3.7-3.4-5.1c-1.4-1.5-3.1-2.6-5.1-3.5
+			C187.1,11.8,185,11.4,182.8,11.4z"/>
+		<linearGradient id="SVGID_4_" gradientUnits="userSpaceOnUse" x1="-3.9405" y1="128.3696" x2="316.0594" y2="-8.6304">
+			<stop  offset="0" style="stop-color:#CB8A2C"/>
+			<stop  offset="5.911693e-02" style="stop-color:#D19945"/>
+			<stop  offset="0.2977" style="stop-color:#E9D1A4"/>
+			<stop  offset="0.405" style="stop-color:#F3E7CA"/>
+			<stop  offset="0.4771" style="stop-color:#F1E3C3"/>
+			<stop  offset="0.5821" style="stop-color:#EDD7B0"/>
+			<stop  offset="0.7072" style="stop-color:#E6C590"/>
+			<stop  offset="0.8478" style="stop-color:#DCAA63"/>
+			<stop  offset="1" style="stop-color:#CF892B"/>
+		</linearGradient>
+		<path style="fill:url(#SVGID_4_);" d="M259.7,54.1c-0.4,0.6-1.2,0.5-1.2,0.5h-1.8c0,0-8.1,0-13-4.8c-2.4-2.4-2.7-3.2-3.9-4.5
+			c-1-1.1-2.8-3.6-2.8-3.6l-4-5.7l-8.6,14l-2.6,3.8c0,0-0.4,0.6-0.6,0.7c-0.2,0.1-1,0.1-1,0.1h-5.4h-5.2c0,0-1.2,0-1.5-0.4
+			c-0.3-0.5,0.2-1.1,0.2-1.1l18-26.9c0,0-12.6-18.3-13.4-19c-0.5-0.5-3.1-3.6-4-4.2c-1.9-1.3-4.6-2.3-4.6-2.3s-0.2-0.1-0.2-0.3
+			c0.1-0.2,0.4-0.2,0.4-0.2h4.4h6.7c0,0,4.4,0.1,7,2.7c1.8,1.8,4.1,4.8,4.1,4.8l6.3,9.9l10.7-17.4h9.5c0,0,1.5,0,2.6,0
+			c0.5,0,0.7,0.3,0.8,0.5c0.1,0.5-1.6,3.2-1.6,3.2l-14.9,22.1l19.4,26.6C259.5,52.8,260.1,53.6,259.7,54.1z M216.2,54.7"/>
+		<linearGradient id="SVGID_5_" gradientUnits="userSpaceOnUse" x1="-19.5878" y1="91.8213" x2="300.4122" y2="-45.1787">
+			<stop  offset="0" style="stop-color:#CB8A2C"/>
+			<stop  offset="5.911693e-02" style="stop-color:#D19945"/>
+			<stop  offset="0.2977" style="stop-color:#E9D1A4"/>
+			<stop  offset="0.405" style="stop-color:#F3E7CA"/>
+			<stop  offset="0.4771" style="stop-color:#F1E3C3"/>
+			<stop  offset="0.5821" style="stop-color:#EDD7B0"/>
+			<stop  offset="0.7072" style="stop-color:#E6C590"/>
+			<stop  offset="0.8478" style="stop-color:#DCAA63"/>
+			<stop  offset="1" style="stop-color:#CF892B"/>
+		</linearGradient>
+		<path class="st1" d="M149.5,38.3c-0.7-0.3-0.6-0.3-1.6-0.7c-0.1,0-0.8-0.2-0.9-0.2c-0.9-0.1-2,0-3.2,0.5c-1.3,0.5-1.6,0.9-2.6,1.8
+			c-1,0.8-1.3,1-2.5,1.7c-2.4,1.4-5.1,2.1-8,2.1c-2.2,0-4.3-0.4-6.2-1.3c-1.9-0.9-3.6-2-5.1-3.4c-1.5-1.4-2.6-3.1-3.4-5.1
+			c-0.8-2-1.2-4-1.2-6.2c0-2.2,0.4-4.2,1.2-6.2c0.8-2,2-3.7,3.4-5.1c1.5-1.4,3.2-2.6,5.1-3.4c1.9-0.9,4-1.3,6.2-1.3
+			c2.9,0,5.6,0.7,8,2.1c1.2,0.7,1.6,0.9,2.5,1.7c1,0.8,1.3,1.2,2.6,1.8c1.1,0.5,2.3,0.6,3.2,0.5c0.1,0,0.8-0.2,0.9-0.2
+			c1-0.4,1-0.4,1.6-0.7c0.7-0.3,1.3-0.7,2-1.1c0.7-0.4,1.6-0.9,2.8-1.5c-1.2-2.1-2.5-3.9-4.2-5.6c-1.6-1.7-3.5-3.2-5.5-4.4
+			c-2-1.2-4.2-2.2-6.6-2.9c-2.4-0.7-4.8-1-7.4-1c-3.8,0-7.3,0.7-10.6,2.1c-3.3,1.4-6.2,3.4-8.7,5.9c-2.5,2.5-4.4,5.4-5.8,8.7
+			c-1.4,3.3-2.1,6.8-2.1,10.5c0,3.7,0.7,7.2,2.1,10.5c1.4,3.3,3.4,6.2,5.8,8.7c2.5,2.5,5.3,4.4,8.7,5.9c3.3,1.4,6.8,2.1,10.6,2.1
+			c2.6,0,5-0.3,7.4-1c2.4-0.7,4.6-1.6,6.6-2.9c2-1.2,3.9-2.7,5.5-4.4c1.6-1.7,3-3.6,4.2-5.6c-1.2-0.6-2.1-1.1-2.8-1.5
+			C150.8,39,150.2,38.6,149.5,38.3z"/>
+		<g>
+			<linearGradient id="SVGID_6_" gradientUnits="userSpaceOnUse" x1="-37.1883" y1="50.7105" x2="282.8117" y2="-86.2895">
+				<stop  offset="0" style="stop-color:#CB8A2C"/>
+				<stop  offset="5.911693e-02" style="stop-color:#D19945"/>
+				<stop  offset="0.2977" style="stop-color:#E9D1A4"/>
+				<stop  offset="0.405" style="stop-color:#F3E7CA"/>
+				<stop  offset="0.4771" style="stop-color:#F1E3C3"/>
+				<stop  offset="0.5821" style="stop-color:#EDD7B0"/>
+				<stop  offset="0.7072" style="stop-color:#E6C590"/>
+				<stop  offset="0.8478" style="stop-color:#DCAA63"/>
+				<stop  offset="1" style="stop-color:#CF892B"/>
+			</linearGradient>
+			<path class="st4" d="M27.7,0.2l-26.9,0c0,0-0.4,0-0.5,0.1C0.1,0.6,0.3,0.7,0.4,1c1,1.5,1.7,3.3,1.7,5.3v47.3
+				c0,0.8,0.7,1.5,1.5,1.5h23.9c6.8,0,26.3-3.9,26.3-28.3C53.7,2.4,34.5,0.2,27.7,0.2 M22.9,47.5h-6.3V7.8h6.3
+				c11.2,0,15.2,5.7,15.2,18.9C38.1,40,33.3,47.5,22.9,47.5"/>
+		</g>
+		<linearGradient id="SVGID_7_" gradientUnits="userSpaceOnUse" x1="-19.814" y1="91.2929" x2="300.186" y2="-45.7071">
+			<stop  offset="0" style="stop-color:#CB8A2C"/>
+			<stop  offset="5.911693e-02" style="stop-color:#D19945"/>
+			<stop  offset="0.2977" style="stop-color:#E9D1A4"/>
+			<stop  offset="0.405" style="stop-color:#F3E7CA"/>
+			<stop  offset="0.4771" style="stop-color:#F1E3C3"/>
+			<stop  offset="0.5821" style="stop-color:#EDD7B0"/>
+			<stop  offset="0.7072" style="stop-color:#E6C590"/>
+			<stop  offset="0.8478" style="stop-color:#DCAA63"/>
+			<stop  offset="1" style="stop-color:#CF892B"/>
+		</linearGradient>
+		<path class="st6" d="M99.1,53.5c0,0.7-0.5,1.2-1.2,1.2h-39c-0.7,0-1.2-0.5-1.2-1.2V45c0-0.7,0.5-1.2,1.2-1.2h39
+			c0.7,0,1.2,0.5,1.2,1.2V53.5z"/>
+		<linearGradient id="SVGID_8_" gradientUnits="userSpaceOnUse" x1="-27.6318" y1="73.0324" x2="292.3682" y2="-63.9676">
+			<stop  offset="0" style="stop-color:#CB8A2C"/>
+			<stop  offset="5.911693e-02" style="stop-color:#D19945"/>
+			<stop  offset="0.2977" style="stop-color:#E9D1A4"/>
+			<stop  offset="0.405" style="stop-color:#F3E7CA"/>
+			<stop  offset="0.4771" style="stop-color:#F1E3C3"/>
+			<stop  offset="0.5821" style="stop-color:#EDD7B0"/>
+			<stop  offset="0.7072" style="stop-color:#E6C590"/>
+			<stop  offset="0.8478" style="stop-color:#DCAA63"/>
+			<stop  offset="1" style="stop-color:#CF892B"/>
+		</linearGradient>
+		<path class="st10" d="M99.1,31.9c0,0.7-0.5,1.2-1.2,1.2h-39c-0.7,0-1.2-0.5-1.2-1.2v-8.5c0-0.7,0.5-1.2,1.2-1.2h39
+			c0.7,0,1.2,0.5,1.2,1.2V31.9z"/>
+		<linearGradient id="SVGID_9_" gradientUnits="userSpaceOnUse" x1="-34.7028" y1="56.5161" x2="285.2972" y2="-80.4839">
+			<stop  offset="0" style="stop-color:#CB8A2C"/>
+			<stop  offset="5.911693e-02" style="stop-color:#D19945"/>
+			<stop  offset="0.2977" style="stop-color:#E9D1A4"/>
+			<stop  offset="0.405" style="stop-color:#F3E7CA"/>
+			<stop  offset="0.4771" style="stop-color:#F1E3C3"/>
+			<stop  offset="0.5821" style="stop-color:#EDD7B0"/>
+			<stop  offset="0.7072" style="stop-color:#E6C590"/>
+			<stop  offset="0.8478" style="stop-color:#DCAA63"/>
+			<stop  offset="1" style="stop-color:#CF892B"/>
+		</linearGradient>
+		<path class="st16" d="M99.5,9.8V2.7V2c0-0.8-0.6-1.4-1.4-1.4h-0.7H70.5c-0.4,0-0.7-0.1-1.1-0.1c-0.4,0-0.9,0-1.3,0.1
+			c-5.7,0.7-10,5.4-10,11.3c0,0,0,0,0,0h22.7c0,0,0,0,0,0l16.5,0v0H98c0,0,0.1,0,0.1,0c0.7-0.1,1.3-0.6,1.3-1.4c0,0,0-0.1,0-0.1
+			L99.5,9.8L99.5,9.8z"/>
+	</g>
+</g></symbol></svg>
+
+  <!-- ===== HEADER ===== -->
+  <header style="position:sticky; top:0; z-index:50; background:rgba(25,53,68,.96); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,.1);">
+    <div style="max-width:1200px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+      <a href="#" style="display:flex; align-items:center;">
+        <svg viewBox="0 0 260 55" role="img" aria-label="Decox" style="height:34px; width:161px; display:block;"><use href="#decoxLogo"/></svg>
+      </a>
+      <nav class="main-nav" style="display:flex; align-items:center; gap:28px; font-size:14px; font-weight:500;">
+        <div class="nav-drop">
+          <a href="bao-gia.html" style="color:#d9e2e8; text-decoration:none;">Bảng giá ▾</a>
+          <div class="nav-drop-menu"><div class="nav-drop-card">
+            <a href="index.html">Nhà phố, biệt thự</a>
+            <a href="can-ho.html">Căn hộ, Duplex</a>
+          </div></div>
+        </div>
+        <a href="index.html#hangmuc" style="color:#d9e2e8; text-decoration:none;">Hạng mục</a>
+        <a href="index.html#duan" style="color:#d9e2e8; text-decoration:none;">Dự án</a>
+        <a href="index.html#quytrinh" style="color:#d9e2e8; text-decoration:none;">Quy trình</a>
+      </nav>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <a class="header-phone" data-tel style="display:flex; align-items:center; gap:7px; text-decoration:none; color:#fff;">
+          <span style="width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.13); display:flex; align-items:center; justify-content:center; color:#fff;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span data-phone style="font-weight:700; font-size:15px; letter-spacing:.3px;">0901 411 489</span>
+        </a>
+        <a href="index.html#lienhe" style="background:#c9a15c; color:#193544; padding:11px 20px; border-radius:999px; font-size:14px; font-weight:700; text-decoration:none; white-space:nowrap;">Nhận báo giá</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== HUB: CHỌN LOẠI CÔNG TRÌNH ===== -->
+  <main style="background:linear-gradient(180deg,#193544 0%,#234a5c 100%); color:#fff; min-height:78vh;">
+    <section style="max-width:1080px; margin:0 auto; padding:80px 24px 96px; text-align:center;">
+      <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(179,146,94,.15); border:1px solid rgba(179,146,94,.4); color:#d9bd93; padding:7px 14px; border-radius:999px; font-size:13px; font-weight:600; letter-spacing:.5px; margin-bottom:22px;">
+        <span style="width:7px; height:7px; border-radius:50%; background:#b3925e;"></span> BÁO GIÁ THI CÔNG DECOX
+      </div>
+      <h1 style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:46px; line-height:1.1; font-weight:700; margin-bottom:16px;">Chọn loại công trình của bạn</h1>
+      <p style="font-size:17px; line-height:1.6; color:#cabfae; max-width:600px; margin:0 auto 48px;">Mỗi loại công trình có bảng giá &amp; cách tính riêng. Chọn một mục bên dưới để xem báo giá chi tiết và ước tính chi phí ngay trong 15 giây.</p>
+
+      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:26px; text-align:left;">
+        <!-- Option 1: Nhà phố / Biệt thự -->
+        <a href="index.html" class="hub-card" style="background:#fff; border-radius:22px; padding:38px 34px; text-decoration:none; color:#1f3544; display:flex; flex-direction:column; box-shadow:0 30px 70px -30px rgba(0,0,0,.6);">
+          <div style="width:60px; height:60px; border-radius:16px; background:#193544; color:#d9bd93; display:flex; align-items:center; justify-content:center; margin-bottom:22px;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/><path d="M9 21v-6h6v6"/></svg>
+          </div>
+          <div style="font-size:12.5px; font-weight:700; letter-spacing:1.5px; color:#b3925e; margin-bottom:6px;">XÂY DỰNG NHÀ Ở</div>
+          <h3 style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:26px; font-weight:700; margin-bottom:12px;">Nhà phố / Biệt thự</h3>
+          <p style="font-size:15px; line-height:1.6; color:#5a5346; margin-bottom:22px; flex:1;">Báo giá xây dựng trọn gói theo m²: Thô · Hoàn thiện · Trọn gói. Máy tính chi phí theo diện tích đất, mật độ xây dựng, số tầng, hầm, lửng, tum…</p>
+          <span style="align-self:flex-start; background:#b3925e; color:#fff; padding:13px 28px; border-radius:999px; font-weight:700; font-size:15px;">Xem báo giá →</span>
+        </a>
+        <!-- Option 2: Căn hộ / Duplex -->
+        <a href="can-ho.html" class="hub-card" style="background:#fff; border-radius:22px; padding:38px 34px; text-decoration:none; color:#1f3544; display:flex; flex-direction:column; box-shadow:0 30px 70px -30px rgba(0,0,0,.6);">
+          <div style="width:60px; height:60px; border-radius:16px; background:#193544; color:#d9bd93; display:flex; align-items:center; justify-content:center; margin-bottom:22px;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/></svg>
+          </div>
+          <div style="font-size:12.5px; font-weight:700; letter-spacing:1.5px; color:#b3925e; margin-bottom:6px;">THI CÔNG CĂN HỘ</div>
+          <h3 style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:26px; font-weight:700; margin-bottom:12px;">Căn hộ / Duplex</h3>
+          <p style="font-size:15px; line-height:1.6; color:#5a5346; margin-bottom:22px; flex:1;">Báo giá cải tạo &amp; hoàn thiện căn hộ theo m²: Cải tạo · Hoàn thiện · Trọn gói. Hỗ trợ Duplex (2 sàn) với công thức diện tích ×1.7.</p>
+          <span style="align-self:flex-start; background:#b3925e; color:#fff; padding:13px 28px; border-radius:999px; font-weight:700; font-size:15px;">Xem báo giá →</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .hub-card { transition:transform .3s ease, box-shadow .3s ease; }
+    .hub-card:hover { transform:translateY(-8px); box-shadow:0 40px 80px -30px rgba(0,0,0,.7); }
+    @media (max-width:720px){ main section > div[style*="grid-template-columns:repeat(2"] { grid-template-columns:1fr !important; } }
+  </style>
+</body>
+</html>
