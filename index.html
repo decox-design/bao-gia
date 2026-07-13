@@ -552,7 +552,8 @@
 
         <label class="opt-label">Phân khúc</label>
         <div class="opt-row">
-          <button class="opt-btn on tier-btn" data-tier="tc">Tiêu chuẩn</button>
+          <button class="opt-btn on tier-btn" data-tier="tk">Tiết kiệm</button>
+          <button class="opt-btn tier-btn" data-tier="kha">Khá</button>
           <button class="opt-btn tier-btn" data-tier="cc">Cao cấp</button>
         </div>
 
@@ -613,7 +614,8 @@
     <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:10px;">
       <button class="pk-arrow" id="pkPrev" type="button" aria-label="Phân khúc trước">‹</button>
       <div class="pk-tabs">
-        <button class="pk-tab on" type="button" data-pk="tc">Tiêu chuẩn</button>
+        <button class="pk-tab on" type="button" data-pk="tk">Tiết kiệm</button>
+        <button class="pk-tab" type="button" data-pk="kha">Khá</button>
         <button class="pk-tab" type="button" data-pk="cc">Cao cấp</button>
       </div>
       <button class="pk-arrow" id="pkNext" type="button" aria-label="Phân khúc sau">›</button>
@@ -1132,19 +1134,16 @@
   // Ma trận đơn giá (đ/m²): [phân khúc][loại]
   // Tiêu chuẩn: mỗi loại có 6 mức (khách kéo thanh trượt) · Cao cấp: giá "từ ..."
   var PRICE_MATRIX = {
-    tc: {
-      0: [3800000, 3900000, 4000000, 4200000, 4400000, 4600000], // Phần thô
-      1: [6800000, 7000000, 7200000, 7400000, 7600000, 7800000], // Hoàn thiện
-      2: [8400000, 8600000, 8800000, 9200000, 9400000, 9600000]  // Trọn gói
-    },
-    cc: { 0: 5000000, 1: 10000000, 2: 15000000 }                 // Cao cấp — từ
+    tk:  { 0: 3800000, 1: 5800000, 2: 7800000 },   // Tiết kiệm — Thô 3.8 (+2 / +4)
+    kha: { 0: 4200000, 1: 6200000, 2: 8200000 },   // Khá — Thô 4.2 (+2 / +4)
+    cc:  { 0: 5000000, 1: 10000000, 2: 15000000 }  // Cao cấp — từ
   };
   var TYPE_NAMES = ['phần thô', 'hoàn thiện', 'trọn gói'];
   var CARD_NAMES = ['Thô', 'Hoàn thiện cơ bản', 'Trọn gói'];
 
   // ---- State ----
-  var state = { land: 80, density: 100, area: 80, floors: 3, ham: 0, lung: 0, tum: 0, st: 0, tier: 'tc', type: 1, level: 0, filter: 'all', hesoOpen: false };
-  var lastCalc = { heso: 3.5, dt: 280, gia: 6800000, total: 1904000000, isTC: true };
+  var state = { land: 80, density: 100, area: 80, floors: 3, ham: 0, lung: 0, tum: 0, st: 0, tier: 'tk', type: 1, level: 0, filter: 'all', hesoOpen: false };
+  var lastCalc = { heso: 3.5, dt: 280, gia: 5800000, total: 1624000000, isTC: false };
 
   // ---- Helpers ----
   function fmtTy(n){
@@ -1186,10 +1185,10 @@
     // s.ham: 0/1.5/2.0 · s.lung: 0/0.65 · s.tum: 0/0.30 · s.st: 0/0.70 (sân thượng)
     var heso = HS_MONG + HS_MAI + s.floors * HS_SAN + s.ham + s.lung + HS_TT + s.tum + s.st;
     var dt = s.area * heso;
-    var isTC = s.tier === 'tc';
-    var gia = isTC ? PRICE_MATRIX.tc[s.type][0] : PRICE_MATRIX.cc[s.type];
+    var isTC = false;   // mọi phân khúc đều là dải giá → hiển thị "từ"
+    var gia = PRICE_MATRIX[s.tier][s.type];
     var total = dt * gia;
-    var pre = isTC ? '' : 'từ ';
+    var pre = 'từ ';
     lastCalc = { heso: heso, dt: dt, gia: gia, total: total, isTC: isTC };
 
     $('landLabel').textContent = s.land;
@@ -1219,17 +1218,17 @@
     });
   }
 
-  // ---- Thanh trượt ngân sách + Phân khúc bảng giá (lướt Tiêu chuẩn ↔ Cao cấp) ----
+  // ---- Thanh trượt ngân sách + Phân khúc bảng giá (Tiết kiệm · Khá · Cao cấp) ----
   var budgetRange = $('budgetRange');
-  var cardPk = 'tc';
-  var CARD_PRICES = {
-    tc: ['3.800.000', '6.800.000', '8.400.000'],
-    cc: ['5.000.000', '10.000.000', '15.000.000']
-  };
+  var cardPk = 'tk';
+  var SEG_NM = { tk:'Tiết kiệm', kha:'Khá', cc:'Cao cấp' };
+  var PK_ORDER = ['tk','kha','cc'];
+  var CARD_PRICES = { cc: ['5.000.000', '10.000.000', '15.000.000'] };  // tk/kha suy ra từ giá Thô
   // Dải giá + ngưỡng chia gói theo từng phân khúc
   var BUDGET_CFG = {
-    tc: { min: 3800000,  max: 9000000,  def: 6800000,  step: 100000, t1: 5200000,  t2: 7200000,  lo: '3,8tr', hi: '9tr' },
-    cc: { min: 5000000,  max: 30000000, def: 10000000, step: 500000, t1: 7000000,  t2: 15000000, lo: '5tr',   hi: '30tr' }
+    tk:  { min: 3800000,  max: 8000000,  def: 6000000,  step: 100000, t1: 5000000,  t2: 7000000,  lo: '3,8tr', hi: '8tr' },
+    kha: { min: 4200000,  max: 8700000,  def: 6500000,  step: 100000, t1: 5500000,  t2: 7500000,  lo: '4,2tr', hi: '8,7tr' },
+    cc:  { min: 5000000,  max: 30000000, def: 10000000, step: 500000, t1: 7000000,  t2: 15000000, lo: '5tr',   hi: '30tr' }
   };
   function applyBudget(){
     var cfg = BUDGET_CFG[cardPk];
@@ -1244,13 +1243,13 @@
   budgetRange.addEventListener('input', applyBudget);
 
   function applyPhanKhuc(pk){
-    if (pk !== 'tc' && pk !== 'cc') return;
+    if (PK_ORDER.indexOf(pk) < 0) return;
     cardPk = pk;
-    // Đổi dải thanh trượt theo phân khúc (Tiêu chuẩn 3,8–9,6tr · Cao cấp 5–30tr)
+    thoIdx = 0;   // reset mức Thô khi đổi phân khúc
     var cfg = BUDGET_CFG[pk];
     budgetRange.min = cfg.min; budgetRange.max = cfg.max; budgetRange.step = cfg.step; budgetRange.value = cfg.def;
     $('budgetLo').textContent = cfg.lo; $('budgetHi').textContent = cfg.hi;
-    $('pkTitle').innerHTML = 'Bảng giá gói <span style="color:#b3925e;">' + (pk === 'cc' ? 'Cao cấp' : 'Tiêu chuẩn') + '</span>';
+    $('pkTitle').innerHTML = 'Bảng giá gói <span style="color:#b3925e;">' + SEG_NM[pk] + '</span>';
     applyBudget();
     // Đổi giá 3 card kèm hiệu ứng mờ
     var grid = document.querySelector('.price-grid');
@@ -1259,10 +1258,10 @@
       var prices = document.querySelectorAll('.price-grid .p-price');
       var froms  = document.querySelectorAll('.price-grid .p-from');
       for (var i = 0; i < prices.length; i++){
-        prices[i].textContent = CARD_PRICES[pk][i];
+        if (CARD_PRICES[pk]) prices[i].textContent = CARD_PRICES[pk][i];
         froms[i].style.display = (pk === 'cc') ? 'inline' : 'none';
       }
-      renderThoCard();   // Thô: giữ giá đang lướt (tc) hoặc ẩn nút (cc)
+      renderThoCard();   // tk/kha: giá Thô đang lướt + HT/Trọn gói suy ra · cc: ẩn nút lướt
       grid.classList.remove('swapping');
     }, 180);
     Array.prototype.forEach.call(document.querySelectorAll('.pk-tab'), function(t){
@@ -1272,8 +1271,9 @@
   Array.prototype.forEach.call(document.querySelectorAll('.pk-tab'), function(t){
     t.addEventListener('click', function(){ applyPhanKhuc(t.getAttribute('data-pk')); });
   });
-  $('pkPrev').addEventListener('click', function(){ applyPhanKhuc('tc'); });
-  $('pkNext').addEventListener('click', function(){ applyPhanKhuc('cc'); });
+  function stepPk(d){ var i = (PK_ORDER.indexOf(cardPk) + d + PK_ORDER.length) % PK_ORDER.length; applyPhanKhuc(PK_ORDER[i]); }
+  $('pkPrev').addEventListener('click', function(){ stepPk(-1); });
+  $('pkNext').addEventListener('click', function(){ stepPk(1); });
   (function(){
     var grid = document.querySelector('.price-grid'), x0 = null;
     grid.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, { passive: true });
@@ -1281,7 +1281,7 @@
       if (x0 === null) return;
       var dx = e.changedTouches[0].clientX - x0; x0 = null;
       if (Math.abs(dx) < 45) return;
-      applyPhanKhuc(dx < 0 ? 'cc' : 'tc');   // vuốt trái → Cao cấp · vuốt phải → Tiêu chuẩn
+      stepPk(dx < 0 ? 1 : -1);   // vuốt trái → phân khúc sau · vuốt phải → trước
     }, { passive: true });
   })();
   // ===== THÔ · Tiêu chuẩn — 7 mức giá, lướt trên card =====
@@ -1365,37 +1365,39 @@
     { price:'4.600.000', rows:THO_KH },
     { price:'4.700.000', rows:THO_DX }
   ];
+  var THO_SEG = { tk: THO7.slice(0,3), kha: THO7.slice(3,7) };   // Tiết kiệm 3.8-4.0 · Khá 4.2-4.7
   var thoIdx = 0;
   function renderThoCard(){
     var firstCard = document.querySelector('.price-grid .price-card');
     var priceEl = firstCard.querySelector('.p-price');
     var fromEl  = firstCard.querySelector('.p-from');
     var meta = $('thoMeta'), prev = $('thoPrev'), next = $('thoNext');
-    if (cardPk === 'tc'){
-      priceEl.textContent = THO7[thoIdx].price;
+    var seg = THO_SEG[cardPk];
+    if (seg){   // Tiết kiệm / Khá — lướt giá Thô
+      if (thoIdx >= seg.length) thoIdx = 0;
+      priceEl.textContent = seg[thoIdx].price;
       if (fromEl) fromEl.style.display = 'none';
       if (meta) meta.style.display = 'flex';
       if (prev) prev.style.display = next.style.display = 'inline-flex';
-      var dots = ''; for (var i=0;i<THO7.length;i++) dots += '<i class="'+(i===thoIdx?'on':'')+'"></i>';
+      var dots = ''; for (var i=0;i<seg.length;i++) dots += '<i class="'+(i===thoIdx?'on':'')+'"></i>';
       $('thoDots').innerHTML = dots;
-      $('thoCount').textContent = 'Mức '+(thoIdx+1)+'/'+THO7.length;
-      // Hoàn thiện = Thô + 2tr · Trọn gói = Thô + 4tr (cập nhật theo mức đang chọn)
-      var base = Number(THO7[thoIdx].price.replace(/\./g,''));
+      $('thoCount').textContent = 'Mức '+(thoIdx+1)+'/'+seg.length;
+      // Hoàn thiện = Thô + 2tr · Trọn gói = Thô + 4tr (theo mức đang chọn)
+      var base = Number(seg[thoIdx].price.replace(/\./g,''));
       var allP = document.querySelectorAll('.price-grid .p-price');
       if (allP[1]) allP[1].textContent = (base + 2000000).toLocaleString('vi-VN');
       if (allP[2]) allP[2].textContent = (base + 4000000).toLocaleString('vi-VN');
-    } else {
+    } else {   // Cao cấp — 1 giá cố định (CARD_PRICES.cc)
       if (meta) meta.style.display = 'none';
       if (prev) prev.style.display = next.style.display = 'none';
       if (fromEl) fromEl.style.display = 'inline';
     }
   }
-  function stepTho(d){ thoIdx = (thoIdx + d + THO7.length) % THO7.length; renderThoCard(); }
+  function stepTho(d){ var seg = THO_SEG[cardPk]; if(!seg) return; thoIdx = (thoIdx + d + seg.length) % seg.length; renderThoCard(); }
   $('thoPrev').addEventListener('click', function(){ stepTho(-1); });
   $('thoNext').addEventListener('click', function(){ stepTho(1); });
 
-  applyBudget();   // khởi tạo
-  renderThoCard(); // khởi tạo card Thô lướt giá
+  applyPhanKhuc('tk');   // khởi tạo phân khúc Tiết kiệm (đồng bộ thanh trượt + 3 card + Thô lướt giá)
 
   $('areaRange').addEventListener('input', function(e){ state.land = Number(e.target.value); renderCalc(); });
   $('densityRange').addEventListener('input', function(e){ state.density = Number(e.target.value); renderCalc(); });
@@ -1776,7 +1778,7 @@
   };
   var DQ_TYPE_KEY = ['tho','ht','tg'];
   var DQ_TYPE_NM  = ['Thô','Hoàn thiện cơ bản','Trọn gói'];
-  var DQ_TIER_NM  = { tc:'Tiêu chuẩn', cc:'Cao cấp' };
+  var DQ_TIER_NM  = { tk:'Tiết kiệm', kha:'Khá', cc:'Cao cấp' };
   var DQ_CUBE = '<svg class="dq-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
   var DQ_NOTES = '<b>Chi phí có thể điều chỉnh theo đặc thù công trình:</b><br>'+
     '• Hẻm nhỏ (dưới 4m): <b>+150.000 – 250.000 đ/m²</b><br>'+
@@ -1789,16 +1791,22 @@
 
   var dqOverlay = document.getElementById('dqOverlay');
   function openDetail(tier, type){
-    if (!DQ[tier]) tier = 'tc';
+    if (tier !== 'tk' && tier !== 'kha' && tier !== 'cc') tier = 'tk';
     var d;
-    if (tier==='tc' && type===0){
-      d = { price: THO7[thoIdx].price + ' đ/m²', desc:'Danh mục vật tư phần thô · Tiêu chuẩn (mức '+(thoIdx+1)+'/'+THO7.length+')', rows: THO7[thoIdx].rows };
-    } else if (tier==='tc' && (type===1 || type===2)){
-      var b = Number(THO7[thoIdx].price.replace(/\./g,'')) + (type===1 ? 2000000 : 4000000);
-      var od = DQ.tc[DQ_TYPE_KEY[type]];
-      d = { price: b.toLocaleString('vi-VN') + ' đ/m²', desc: od.desc, rows: od.rows, empty: od.empty };
-    } else {
-      d = DQ[tier][DQ_TYPE_KEY[type]];
+    if (tier==='tk' || tier==='kha'){
+      var seg = THO_SEG[tier];
+      if (thoIdx >= seg.length) thoIdx = 0;
+      var item = seg[thoIdx];
+      if (type===0){
+        d = { price: item.price + ' đ/m²', desc:'Vật tư phần thô · ' + SEG_NM[tier] + ' (mức '+(thoIdx+1)+'/'+seg.length+')', rows: item.rows };
+      } else {
+        var b = Number(item.price.replace(/\./g,'')) + (type===1 ? 2000000 : 4000000);
+        var src = type===1 ? DQ_HT_TC : DQ_TG_CC;
+        var nm  = type===1 ? 'hoàn thiện' : 'trọn gói';
+        d = { price: b.toLocaleString('vi-VN') + ' đ/m²', desc:'Vật tư '+nm+' · ' + SEG_NM[tier], rows: src };
+      }
+    } else {   // Cao cấp
+      d = DQ.cc[DQ_TYPE_KEY[type]];
     }
     if(!d) return;
     document.getElementById('dqTag').textContent = 'VẬT TƯ · ' + DQ_TIER_NM[tier].toUpperCase();
@@ -1841,7 +1849,7 @@
     2: ['<b>Nội thất cố định:</b> Tủ bếp (trên/dưới), tủ quần áo, tủ giày', '<b>Nội thất rời:</b> Sofa, bàn trà, kệ tivi, bộ bàn ăn, giường ngủ, tab đầu giường', '<b>Tiện ích:</b> Rèm cửa 2 lớp']
   };
   var TYPE_FULL = ['Thô', 'Hoàn thiện cơ bản', 'Trọn gói'];
-  var TIER_FULL = { tc: 'Tiêu chuẩn', cc: 'Cao cấp' };
+  var TIER_FULL = { tk: 'Tiết kiệm', kha: 'Khá', cc: 'Cao cấp' };
   function quyMoText(){
     var t = state.floors + ' tầng';
     if (state.ham === 1.5) t += ' · Bán hầm'; else if (state.ham === 2) t += ' · Full hầm';
