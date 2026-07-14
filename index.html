@@ -1878,10 +1878,11 @@
     var closeBtn = modal.querySelector('.dq-close');
     var headPdf = modal.querySelector('.dq-head-pdf');
     var logo = modal.querySelector('.dq-logo');
-    // Mở rộng để chụp đủ nội dung (không bị cắt do vùng cuộn / overlay fixed) + logo dạng text (SVG không render trong html2canvas)
-    var s = { bMax:body?body.style.maxHeight:'', bOvf:body?body.style.overflow:'', oOvf:overlay.style.overflow, oAlign:overlay.style.alignItems, scroll:window.pageYOffset, logo:logo?logo.innerHTML:null };
+    // Mở rộng + bỏ bo góc/padding để chụp sát nội dung (không trắng đầu trang, không cắt) + logo dạng text
+    var s = { bMax:body?body.style.maxHeight:'', bOvf:body?body.style.overflow:'', oOvf:overlay.style.overflow, oAlign:overlay.style.alignItems, oPad:overlay.style.padding, mTf:modal.style.transform, mBr:modal.style.borderRadius, mMg:modal.style.margin, scroll:window.pageYOffset, logo:logo?logo.innerHTML:null };
     if (body){ body.style.maxHeight = 'none'; body.style.overflow = 'visible'; }
-    overlay.style.overflow = 'visible'; overlay.style.alignItems = 'flex-start';
+    overlay.style.overflow = 'visible'; overlay.style.alignItems = 'flex-start'; overlay.style.padding = '0';
+    modal.style.transform = 'none'; modal.style.borderRadius = '0'; modal.style.margin = '0';
     if (foot) foot.style.display = 'none';
     if (closeBtn) closeBtn.style.visibility = 'hidden';
     if (headPdf) headPdf.style.visibility = 'hidden';
@@ -1891,7 +1892,8 @@
     var name = (overlay.id === 'ktOverlay') ? 'khai-toan-decox.pdf' : 'chi-tiet-vat-tu-decox.pdf';
     function restore(){
       if (body){ body.style.maxHeight = s.bMax; body.style.overflow = s.bOvf; }
-      overlay.style.overflow = s.oOvf; overlay.style.alignItems = s.oAlign;
+      overlay.style.overflow = s.oOvf; overlay.style.alignItems = s.oAlign; overlay.style.padding = s.oPad;
+      modal.style.transform = s.mTf; modal.style.borderRadius = s.mBr; modal.style.margin = s.mMg;
       if (foot) foot.style.display = '';
       if (closeBtn) closeBtn.style.visibility = '';
       if (headPdf) headPdf.style.visibility = '';
