@@ -1077,8 +1077,12 @@
               <input id="fPhone" inputmode="tel" placeholder="09xx xxx xxx" style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid #d8cfbe; background:#faf8f4; font-size:15px; outline:none;">
             </div>
             <div>
-              <label style="display:block; font-size:13px; font-weight:600; color:#57503f; margin-bottom:7px;">Diện tích & nhu cầu</label>
-              <textarea id="fNeed" rows="3" placeholder="VD: Đất 5x18m, xây 3 tầng, gói trọn gói..." style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid #d8cfbe; background:#faf8f4; font-size:15px; outline:none; resize:none;"></textarea>
+              <label style="display:block; font-size:13px; font-weight:600; color:#57503f; margin-bottom:7px;">Diện tích &amp; nhu cầu <span style="font-weight:400; color:#9a9082; font-size:12px;">· tự điền từ máy tính, bạn chỉnh được</span></label>
+              <textarea id="fNeed" rows="6" placeholder="VD: Đất 5x18m, xây 3 tầng, gói trọn gói..." style="width:100%; padding:14px 16px; border-radius:12px; border:1px solid #d8cfbe; background:#faf8f4; font-size:14px; line-height:1.6; outline:none; resize:vertical;"></textarea>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:6px;">
+                <span style="font-size:11.5px; color:#9a9082;">↑ Lấy từ công cụ ước tính chi phí</span>
+                <button type="button" id="fResync" style="display:none; font-size:12px; color:#b3925e; font-weight:700; background:none; border:none; cursor:pointer; padding:0;">↻ Lấy lại từ máy tính</button>
+              </div>
             </div>
             <button type="submit" style="background:#b3925e; color:#fff; padding:16px; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer;">Gửi yêu cầu báo giá →</button>
             <p style="text-align:center; font-size:12px; color:#9a9082;">Bằng việc gửi, bạn đồng ý để Decox liên hệ tư vấn.</p>
@@ -1245,6 +1249,7 @@
       chk.classList.toggle('on', on);
       var inp = chk.querySelector('input'); if (inp) inp.checked = on;
     });
+    syncLead();   // tự điền lựa chọn vào ô "Diện tích & nhu cầu"
   }
 
   // ---- Thanh trượt ngân sách + Phân khúc bảng giá (Tiết kiệm · Khá · Cao cấp) ----
@@ -2029,12 +2034,30 @@
   function closeKt(){ ktOverlay.classList.remove('open'); document.body.style.overflow = ''; }
   document.getElementById('ktBtn').addEventListener('click', openKhaiToan);
   document.getElementById('ktClose').addEventListener('click', closeKt);
+  // ---- Tự điền lựa chọn máy tính vào ô "Diện tích & nhu cầu" (sửa được) ----
+  var leadEdited = false;
+  function buildLeadSummary(){
+    var s = state, c = lastCalc;
+    return 'Diện tích đất: ' + s.land + ' m²\n'
+         + 'Mật độ xây dựng: ' + s.density + '%\n'
+         + 'Quy mô: ' + quyMoText() + '\n'
+         + 'Hạng mục thi công: ' + TYPE_FULL[s.type] + '\n'
+         + 'Phân khúc: ' + TIER_FULL[s.tier] + '\n'
+         + 'Chi phí dự kiến: ' + (c.isTC ? '≈ ' : 'từ ') + fmtTy(c.total);
+  }
+  function syncLead(){
+    var el = document.getElementById('fNeed');
+    if (!el || leadEdited) return;
+    el.value = buildLeadSummary();
+  }
+  (function(){
+    var el = document.getElementById('fNeed'), rs = document.getElementById('fResync');
+    if (el) el.addEventListener('input', function(){ leadEdited = true; if (rs) rs.style.display = 'inline-block'; });
+    if (rs) rs.addEventListener('click', function(){ leadEdited = false; syncLead(); rs.style.display = 'none'; });
+  })();
   document.getElementById('ktLead').addEventListener('click', function(){
     closeKt();
-    var c = lastCalc, s = state;
-    var need = 'Đất ' + s.land + 'm² · mật độ ' + s.density + '% · XD 1 sàn ' + s.area + 'm² · ' + quyMoText() + ' · Gói ' + TYPE_FULL[s.type] + ' (' + TIER_FULL[s.tier] + ') · Chi phí dự kiến ' + (c.isTC ? '≈ ' : 'từ ') + fmtTy(c.total);
-    var fNeed = document.getElementById('fNeed');
-    if (fNeed && !fNeed.value.trim()) fNeed.value = need;
+    syncLead();
     setTimeout(function(){ var fn = document.getElementById('fName'); if (fn) fn.focus(); }, 500);
   });
   document.getElementById('ktMaterial').addEventListener('click', function(){ closeKt(); openDetail(state.tier, state.type); });
