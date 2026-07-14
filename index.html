@@ -119,6 +119,16 @@
   .dq-foot { padding:18px 30px 24px; display:flex; gap:12px; flex-wrap:wrap; }
   .dq-cta { flex:1; min-width:200px; text-align:center; background:#b3925e; color:#fff; padding:15px; border-radius:12px; font-weight:700; font-size:14.5px; text-decoration:none; transition:filter .2s; }
   .dq-cta:hover { filter:brightness(1.07); }
+  @media print {
+    @page { margin: 12mm; }
+    body.printing { -webkit-print-color-adjust:exact; print-color-adjust:exact; background:#fff !important; }
+    body.printing > *:not(.dq-overlay):not(svg) { display:none !important; }
+    body.printing .dq-overlay:not(.open) { display:none !important; }
+    body.printing .dq-overlay.open { position:static !important; display:block !important; background:#fff !important; padding:0 !important; overflow:visible !important; opacity:1 !important; }
+    body.printing .dq-overlay.open .dq-modal { box-shadow:none !important; max-width:100% !important; width:100% !important; transform:none !important; border-radius:0 !important; }
+    body.printing .dq-body { max-height:none !important; overflow:visible !important; }
+    body.printing .dq-close, body.printing .dq-foot { display:none !important; }
+  }
   @media (max-width:560px){ .dq-row{ grid-template-columns:1fr; gap:3px; } .dq-body,.dq-head,.dq-notes,.dq-foot{ padding-left:20px; padding-right:20px; } }
 
   /* ---- Responsive ---- */
@@ -694,6 +704,7 @@
     <div class="dq-modal">
       <div class="dq-head" id="dqHead">
         <button type="button" class="dq-close" id="dqClose" aria-label="Đóng">&times;</button>
+        <div style="margin-bottom:12px;"><svg viewBox="0 0 260 55" role="img" aria-label="Decox" style="height:24px; width:113px; display:block;"><use href="#decoxLogo"/></svg></div>
         <div style="font-size:12px; font-weight:700; letter-spacing:1.5px; opacity:.8;" id="dqTag">GÓI THI CÔNG</div>
         <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-top:6px;">
           <h3 id="dqTitle" style="font-family:'Gotham','Montserrat','Be Vietnam Pro',sans-serif; font-size:26px; font-weight:700;">Gói</h3>
@@ -705,6 +716,7 @@
       <div class="dq-body" id="dqBody"></div>
       <div class="dq-notes" id="dqNotes"></div>
       <div class="dq-foot">
+        <button type="button" class="dq-cta pdf-btn" style="flex:0 0 auto; min-width:150px; background:#fff; color:#193544; border:1.5px solid #193544;">⬇ Tải PDF</button>
         <a href="#lienhe" class="dq-cta" id="dqCta">Nhận báo giá cho lô đất của tôi →</a>
       </div>
     </div>
@@ -715,6 +727,7 @@
     <div class="dq-modal">
       <div class="dq-head" style="background:linear-gradient(135deg,#1d3d4e,#12242e);">
         <button type="button" class="dq-close" id="ktClose" aria-label="Đóng">&times;</button>
+        <div style="margin-bottom:12px;"><svg viewBox="0 0 260 55" role="img" aria-label="Decox" style="height:24px; width:113px; display:block;"><use href="#decoxLogo"/></svg></div>
         <div style="font-size:12px; font-weight:700; letter-spacing:1.5px; opacity:.8;">KHÁI TOÁN SƠ BỘ</div>
         <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-top:8px;">
           <span style="font-size:14px; opacity:.85;">Chi phí dự kiến</span>
@@ -724,8 +737,9 @@
       </div>
       <div class="dq-body" id="ktBody"></div>
       <div class="dq-foot">
-        <button type="button" class="dq-cta" id="ktMaterial" style="flex:1; min-width:170px; background:#fff; color:#193544; border:1.5px solid #193544;">Xem chi tiết vật tư</button>
-        <a href="#lienhe" class="dq-cta" id="ktLead" style="flex:1; min-width:170px;">Nhận báo giá đầy đủ →</a>
+        <button type="button" class="dq-cta pdf-btn" style="flex:0 0 auto; min-width:140px; background:#fff; color:#193544; border:1.5px solid #193544;">⬇ Tải PDF</button>
+        <button type="button" class="dq-cta" id="ktMaterial" style="flex:1; min-width:150px; background:#fff; color:#193544; border:1.5px solid #193544;">Xem chi tiết vật tư</button>
+        <a href="#lienhe" class="dq-cta" id="ktLead" style="flex:1; min-width:150px;">Nhận báo giá đầy đủ →</a>
       </div>
     </div>
   </div>
@@ -1850,6 +1864,10 @@
   Array.prototype.forEach.call(document.querySelectorAll('.btn-detail'), function(btn){
     btn.addEventListener('click', function(){ openDetail(cardPk, Number(btn.getAttribute('data-type'))); });
   });
+  // ---- Tải PDF (in popup đang mở qua trình duyệt → lưu PDF) ----
+  function printPopup(){ document.body.classList.add('printing'); window.print(); }
+  window.addEventListener('afterprint', function(){ document.body.classList.remove('printing'); });
+  Array.prototype.forEach.call(document.querySelectorAll('.pdf-btn'), function(b){ b.addEventListener('click', printPopup); });
   document.getElementById('dqClose').addEventListener('click', closeDetail);
   document.getElementById('dqCta').addEventListener('click', closeDetail);
   dqOverlay.addEventListener('click', function(e){ if(e.target === dqOverlay) closeDetail(); });
