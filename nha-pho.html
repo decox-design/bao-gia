@@ -1403,11 +1403,55 @@
     ['Ống luồn dây điện','Vanlock (âm dầm–sàn BTCT) · Sino–MPE (âm tường gạch, thả trần)'],
     ['Chống thấm','Sikatop Seal 109 + lưới thủy tinh']
   ];
+  // Faco — Gói TIÊU CHUẨN (theo bảng "Chủng loại vật tư phần thô" của Faco Design & Build)
+  var THO_FACO_TC = [
+    ['Sắt - Thép','Việt Nhật CB3 hoặc Pomina SD295'],
+    ['Gạch','Trung Nguyên, Quốc Toản, Đồng Nai hoặc tương đương'],
+    ['Cát vàng','Cát rửa hạt lớn (công tác bê tông) · Cát Mi (công tác xây tô)'],
+    ['Ống thoát nước','Ống nhựa PVC Bình Minh'],
+    ['Ống cấp nước lạnh','PVC Bình Minh'],
+    ['Cục kê bê tông đúc sẵn','Có'],
+    ['Dây Internet','Cáp chuyên dụng AMP Cat5E'],
+    ['Xi măng','INSEE (công tác bê tông) · Hà Tiên (công tác xây tô)'],
+    ['Đá Đồng Nai','10 – 20mm (bê tông) · 40 – 60mm (bê tông lót)'],
+    ['Bê tông thương phẩm','Áp dụng khi mặt bằng cho phép (móng, dầm, sàn) · mác theo thiết kế · trộn máy M250 tỉ lệ 1 xi măng – 4 cát – 6 đá (thùng 18l)'],
+    ['Dây điện (Cadivi)','Cáp điện loại 1 Cadivi, 7 lõi ruột đồng, mã CV · đèn 1.5mm, ổ cắm 2.5mm, dây tầng 8mm (tiết diện theo bản vẽ)'],
+    ['Dây ruột gà','Sino – MPE (luồn dây điện trong dầm – tường)'],
+    ['Ống cứng luồn dây điện âm sàn BTCT','Vega, Sino'],
+    ['Chống thấm','Flin Kote No.3 – Sika Latex'],
+    ['Dây cáp (truyền hình – điện thoại)','MPE'],
+    ['Ngói – Tole','Ngói Đồng Tâm, Tole Hoa Sen hoặc tương đương (trường hợp công trình có mái ngói/mái tole)']
+  ];
+  // Faco — Gói NÂNG CAO
+  var THO_FACO_NC = [
+    ['Sắt - Thép','Việt Nhật CB4 hoặc Pomina SD390'],
+    ['Gạch','Thành Tâm, Tám Quỳnh hoặc tương đương'],
+    ['Cát vàng','Cát rửa hạt lớn (công tác bê tông) · Cát Mi (công tác xây tô)'],
+    ['Ống thoát nước','Ống nhựa uPVC Bình Minh'],
+    ['Ống cấp nước lạnh','PPR Bình Minh'],
+    ['Ống cấp nước nóng','PPR Vesbo'],
+    ['Cục kê bê tông đúc sẵn','Có'],
+    ['Vật tư hệ thống cọc đồng, tiếp địa, dây te','Có'],
+    ['Ván phủ phim cao cấp','Có'],
+    ['Phụ gia chống thấm B6 trong BTCT thương phẩm','Có'],
+    ['Dây Internet','Cáp chuyên dụng AMP Cat6'],
+    ['Xi măng','INSEE (công tác bê tông) · Hà Tiên (công tác xây tô)'],
+    ['Đá Đồng Nai','10 – 20mm (bê tông) · 40 – 60mm (bê tông lót)'],
+    ['Bê tông thương phẩm','Áp dụng khi mặt bằng cho phép (móng, dầm, sàn) · mác theo thiết kế · trộn máy M250 tỉ lệ 1 xi măng – 4 cát – 6 đá (thùng 18l)'],
+    ['Dây điện (Cadivi)','Cáp điện loại 1 Cadivi, 7 lõi ruột đồng, mã hiệu CV · đèn 1.5mm, ổ cắm 2.5mm, dây tầng 8mm (tiết diện theo bản vẽ)'],
+    ['Dây ruột gà','Ống cứng Vega'],
+    ['Ống cứng luồn dây điện âm sàn BTCT','Vega, Sino'],
+    ['Chống thấm','Flin Kote No.3 – Sika Latex'],
+    ['Dây cáp (truyền hình – điện thoại)','Sino'],
+    ['Ngói – Tole','Ngói Đồng Tâm, Tole Hoa Sen hoặc tương đương (trường hợp công trình có mái ngói/mái tole)']
+  ];
+  // 7 mức giá Thô — bộ vật tư theo version mới:
+  // 3.8 Faco tiêu chuẩn · 3.9 ANT · 4.0 Wonder tiêu chuẩn · 4.2 Faco nâng cao · 4.4 Wonder nâng cao · 4.6 King House · 4.7 Decox
   var THO7 = [
-    { price:'3.800.000', rows:THO_ANT },
+    { price:'3.800.000', rows:THO_FACO_TC },
     { price:'3.900.000', rows:THO_ANT },
     { price:'4.000.000', rows:THO_W1 },
-    { price:'4.200.000', rows:THO_W2 },
+    { price:'4.200.000', rows:THO_FACO_NC },
     { price:'4.400.000', rows:THO_W3 },
     { price:'4.600.000', rows:THO_KH },
     { price:'4.700.000', rows:THO_DX }
