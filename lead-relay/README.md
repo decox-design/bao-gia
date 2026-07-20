@@ -1,7 +1,9 @@
 # Lead relay → Lark Sheet
 
 Đổ dữ liệu form "Nhận báo giá" của `nha-pho.html` & `can-ho.html` vào sheet:
-`https://decox-design-center.sg.larksuite.com/sheets/TFTasxNAuh7ApCt9D5tlBhpsgjh?sheet=4Yyr8R`
+`https://dsa07judxqbm.sg.larksuite.com/sheets/Oq48siFxbhPqZotDznRl1Qv3g9d` (file "Data", Decox Group 5)
+
+> File cũ `TFTasxNAuh7ApCt9D5tlBhpsgjh` là tài liệu **External** nên không add app vào được — xem cảnh báo ở mục 1.
 
 Trình duyệt **không** gọi thẳng Lark được (API bắt buộc token sinh từ App Secret + chặn CORS),
 nên Apps Script đứng giữa: page → Apps Script Web App → Lark API.
@@ -42,8 +44,8 @@ Project Settings (⚙) → **Script Properties** → Add:
 |---|---|
 | `LARK_APP_ID` | App ID ở bước 1 |
 | `LARK_APP_SECRET` | App Secret ở bước 1 |
-| `SHEET_TOKEN` | `TFTasxNAuh7ApCt9D5tlBhpsgjh` |
-| `SHEET_ID` | `4Yyr8R` |
+| `SHEET_TOKEN` | phần sau `/sheets/` trong URL — copy trực tiếp từ thanh địa chỉ, đừng gõ tay |
+| `SHEET_ID` | id của tab (URL không có `?sheet=` thì để tạm `Sheet1`, chạy `checkAccess` sẽ in ra id đúng để điền lại) |
 | `LARK_DOMAIN` | `open.larksuite.com` |
 
 > App Secret **chỉ** nằm ở đây. Không bao giờ đưa vào file HTML — page là public, ai cũng xem được source.
