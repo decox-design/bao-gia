@@ -1561,7 +1561,7 @@
 
   // ---- Lead form ----
   // ---- Gửi lead về Lark Sheet (qua Apps Script relay · xem lead-relay/README.md) ----
-  var LEAD_ENDPOINT = '';   // ← dán Web app URL của Apps Script vào đây
+  var LEAD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4Z5upootqdctEBaWskkSiXlCAkn7C9Mv34-v_8P_diRipwhk8tIofUo5bWoBhRuw7EQ/exec';   // ← dán Web app URL của Apps Script vào đây
   function sendLead(payload){
     if (!LEAD_ENDPOINT) return;
     var body = JSON.stringify(payload);

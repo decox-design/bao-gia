@@ -67,10 +67,11 @@ Project Settings (⚙) → **Script Properties** → Add:
 Trong `nha-pho.html` và `can-ho.html`, tìm dòng:
 
 ```js
-var LEAD_ENDPOINT = '';   // ← dán Web app URL của Apps Script vào đây
+var LEAD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4Z5upootqdctEBaWskkSiXlCAkn7C9Mv34-v_8P_diRipwhk8tIofUo5bWoBhRuw7EQ/exec';
 ```
 
-dán URL ở bước 4 (mục 5.4) vào. Xong — submit form là sheet có dòng mới.
+Đã nối sẵn (deployment "Lead form nha pho + can ho", Version 1, Jul 2026). Nếu deploy lại ra URL mới thì
+sửa hằng số này ở cả 2 file.
 
 Mỗi lần sửa `Code.gs` phải **Deploy → Manage deployments → Edit → New version** thì bản live mới đổi.
 
