@@ -1060,6 +1060,7 @@
                 <button type="button" id="fResync" style="display:none; font-size:12px; color:#b3925e; font-weight:700; background:none; border:none; cursor:pointer; padding:0;">↻ Lấy lại từ máy tính</button>
               </div>
             </div>
+            <input id="fCompany" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;">
             <button type="submit" style="background:#b3925e; color:#fff; padding:16px; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer;">Gửi yêu cầu báo giá →</button>
             <p style="text-align:center; font-size:12px; color:#9a9082;">Bằng việc gửi, bạn đồng ý để Decox liên hệ tư vấn.</p>
           </form>
@@ -1339,10 +1340,39 @@
   });
 
   // ---- Lead form ----
+  // ---- Gửi lead về Lark Sheet (qua Apps Script relay · xem lead-relay/README.md) ----
+  var LEAD_ENDPOINT = '';   // ← dán Web app URL của Apps Script vào đây
+  function sendLead(payload){
+    if (!LEAD_ENDPOINT) return;
+    var body = JSON.stringify(payload);
+    try {
+      var blob = new Blob([body], { type: 'text/plain;charset=UTF-8' });
+      if (navigator.sendBeacon && navigator.sendBeacon(LEAD_ENDPOINT, blob)) return;
+    } catch (err) {}
+    try {
+      fetch(LEAD_ENDPOINT, { method: 'POST', mode: 'no-cors', keepalive: true,
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: body })['catch'](function(){});
+    } catch (err) {}
+  }
   $('leadForm').addEventListener('submit', function(e){
     e.preventDefault();
     var phone = $('fPhone').value.trim();
     if (!phone) { $('fPhone').focus(); return; }
+    var s = state, c = lastCalc || {}, hp = $('fCompany');
+    sendLead({
+      page: 'Căn hộ',
+      name: $('fName').value.trim(),
+      phone: phone,
+      area: s.area,
+      density: '',
+      scale: quyMoText(),
+      type: TYPE_FULL[s.type],
+      tier: TIER_FULL[s.tier],
+      cost: (c.isTC ? '≈ ' : 'từ ') + fmtTy(c.total || 0),
+      note: $('fNeed').value.trim(),
+      url: location.href,
+      hp: hp ? hp.value : ''
+    });
     $('leadForm').style.display = 'none';
     $('leadThanks').style.display = 'block';
   });
