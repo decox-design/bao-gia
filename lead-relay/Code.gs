@@ -98,6 +98,33 @@ function getTenantToken() {
   return body.tenant_access_token;
 }
 
+/**
+ * Chạy tay TRƯỚC setupHeader: kiểm tra app đã đọc được file sheet chưa.
+ * Lỗi hay gặp:
+ *  - 91403 / permission denied → app chưa được add làm cộng tác viên của file,
+ *    hoặc file là tài liệu External (khác tenant với app) nên không add được.
+ *    Cách xử lý: tạo sheet mới ngay trong tenant của app rồi đổi SHEET_TOKEN.
+ *  - 99991663 → sai App ID / App Secret.
+ */
+function checkAccess() {
+  var p = props();
+  var res = UrlFetchApp.fetch(
+    'https://' + p.LARK_DOMAIN + '/open-apis/sheets/v2/spreadsheets/' + p.SHEET_TOKEN + '/metainfo',
+    { headers: { Authorization: 'Bearer ' + getTenantToken() }, muteHttpExceptions: true }
+  );
+  var body = JSON.parse(res.getContentText() || '{}');
+  if (body.code !== 0) throw new Error('Chưa truy cập được sheet: ' + res.getContentText());
+
+  var sheets = (body.data && body.data.sheets) || [];
+  var ids = sheets.map(function (s) { return s.sheetId + ' (' + s.title + ')'; }).join(', ');
+  var found = sheets.some(function (s) { return s.sheetId === p.SHEET_ID; });
+  console.log('OK — file: ' + (body.data.properties && body.data.properties.title));
+  console.log('Các sheet trong file: ' + ids);
+  if (!found) throw new Error('SHEET_ID "' + p.SHEET_ID + '" không có trong file. Chọn 1 id ở trên.');
+  console.log('SHEET_ID hợp lệ. Chạy tiếp setupHeader().');
+  return true;
+}
+
 /** Chạy tay 1 lần để ghi dòng tiêu đề vào sheet. */
 function setupHeader() {
   appendToLark(HEADER);
