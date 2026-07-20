@@ -1358,14 +1358,6 @@
     ['Dây điện','Cáp đơn Cadivi CV (vỏ PVC)'],['Dây tín hiệu','Cat6 FTP Pro'],['Ống luồn dây','Sino · MPE'],
     ['Đế âm tường','Sino Vanlock'],['Cọc tiếp địa','Mạ đồng'],['Nẹp tô tường','Không'],['Bồn tự hoại','Composite Đại Thành 1500L']
   ];
-  var THO_W2 = [
-    ['Xi măng','Insee PCB40 đa dụng'],['Cát xây tô','Cát vàng'],['Đá','Đá Đồng Nai hoặc địa phương'],
-    ['Gạch xây','Tuynel Bình Dương, Đồng Nai · Loại A'],['Thép xây dựng','Việt Nhật CB30'],
-    ['Bê tông','Bê tông thương phẩm đá xám (hoặc trộn tại chỗ)'],['Ván coppha','Coppha phủ phim'],
-    ['Chống thấm','SikaTop Seal 107'],['Ống nước','Bình Minh (áp lực ≥ theo thiết kế) · nước nóng PP-R'],
-    ['Dây điện','Cáp đơn Cadivi CV (vỏ PVC)'],['Dây tín hiệu','Cat6e FTP Commscope'],['Ống luồn dây','Sino · MPE'],
-    ['Đế âm tường','Sino Vanlock'],['Cọc tiếp địa','Đồng thau'],['Nẹp tô tường','Có'],['Bồn tự hoại','Composite Đại Thành 2000L']
-  ];
   var THO_W3 = [
     ['Xi măng','Insee Power-S đa dụng'],['Cát xây tô','Cát vàng'],['Đá','Đá Đồng Nai hoặc địa phương'],
     ['Gạch xây','Tuynel Bình Dương, Đồng Nai · Loại A'],['Thép xây dựng','Việt Nhật CB4 hoặc Pomina SD390'],
@@ -1585,25 +1577,6 @@
   toggleScrollTop();
 
   // ---- Báo giá chi tiết (modal vật tư) ----
-  var DQ_ITEMS = ['Xi măng','Cát xây tô','Đá','Gạch xây','Thép xây dựng','Bê tông','Ván coppha','Chống thấm','Ống nước','Dây điện','Dây tín hiệu','Ống luồn dây','Đế âm tường','Cọc tiếp địa','Nẹp tô tường','Bồn tự hoại'];
-  var DQ_THO_TC = [
-    ['Thép','Việt Nhật (Vina Kyoei Steel) – thép Nhật'],
-    ['Cát','Cát Tây Ninh – cát sạch đổ bê tông, xây tô theo tiêu chuẩn XDVN (hoặc tương đương)'],
-    ['Đá','Đá xanh Hóa An Đồng Nai 1×2 đổ bê tông theo tiêu chuẩn XDVN (hoặc tương đương)'],
-    ['Gạch xây','Gạch Tuynen Bình Dương – ống 4 lỗ 8×8×18, đinh 2 lỗ 4×8×18, mí 8×8×8 (hoặc tương đương)'],
-    ['Xi măng','INSEE, Hà Tiên – cho công tác bê tông & xây tô'],
-    ['Dây điện','Cadivi (hoặc tương đương)'],
-    ['Dây antena, điện thoại, ADSL','Sino (hoặc tương đương)'],
-    ['Ống cứng, ống ruột gà','Sino-Vanlock (hoặc tương đương)'],
-    ['Đế âm, hộp chia','Sino (hoặc tương đương)'],
-    ['Tủ điện CB','Sino, Mpe (hoặc tương đương)'],
-    ['Ống cấp nước nóng, lạnh','Bình Minh (PPR)'],
-    ['Ống cấp nước lộ thiên trên mái','Ống đen VESBO – chống tia UV & chống mục thành ống (hoặc tương đương)'],
-    ['Ống thoát nước','Bình Minh (PVC, uPVC)'],
-    ['Mái ngói','Đồng Tâm, Ruby (hoặc tương đương)'],
-    ['Chống thấm sàn ban công, mái','Kova CT-11A'],
-    ['Chống thấm sàn vệ sinh, kết nối vữa dán gạch','Sika Topseal – chống thấm đàn hồi cho sàn vệ sinh / Sika Latex – phụ gia chống thấm & kết nối']
-  ];
   var DQ_THO_CC = [
     ['Cốp pha','Sàn dùng cốp pha tấm phủ phim; dầm/cột ván đỏ; giàn giáo H, cây chống sắt cho sàn – dầm – sê nô'],
     ['Xi măng','Insee PC40 / Vicem Hà Tiên PCB40; xây tô Hà Tiên – Insee (M75)'],
@@ -1698,82 +1671,6 @@
     ['CÁC HẠNG MỤC KHÁC',''],
     ['Vệ sinh bàn giao','Vệ sinh thô (2 lần) + vệ sinh tinh trước bàn giao']
   ];
-  var DQ_TG_TC = [
-    ['TRẦN THẠCH CAO',''],
-    ['Trần thạch cao','Vĩnh Tường khung chìm Alpha hoặc Basi, tấm Gyproc Siêu bền X 9mm'],
-    ['Trần thạch cao (vệ sinh)','Vĩnh Tường khung chìm Alpha hoặc Basi, tấm Gyproc siêu chống ẩm 9mm'],
-    ['Shadowline / khe hắt sáng','Vĩnh Tường (theo thiết kế)'],
-    ['Nắp thăm trần','Loại không viền Midec hoặc Amiv'],
-    ['SƠN NƯỚC TRONG & NGOÀI',''],
-    ['Sơn trong nhà','Dulux Easy Clean · 1 lớp lót + 2 lớp phủ'],
-    ['Bột trét trong nhà','Joton SP Filler · 2 lớp matic'],
-    ['Sơn ngoài nhà','Dulux Weather Shield · 1 lớp lót + 2 lớp phủ'],
-    ['Bột trét ngoài nhà','Joton siêu trắng · 2 lớp matic'],
-    ['ỐP LÁT SÀN – TƯỜNG',''],
-    ['Gạch nền các tầng','Vietceramic / Stile / Casabella · 80×80'],
-    ['Sàn gỗ công nghiệp','Innovar / An Cường / Sàn gỗ kỹ thuật · lớp lót cao su non'],
-    ['Gạch ốp tường toilet','Vietceramic / Stile / Casabella · 60×120'],
-    ['Gạch sàn toilet','Vietceramic / Stile / Casabella · 60×60'],
-    ['Gạch/đá ốp mặt tiền','Vật liệu tùy chọn theo thiết kế'],
-    ['Gạch sân, ban công, sân thượng','Vietceramic / Stile / Casabella · 30×60 (không gồm gạch ốp mái/tum)'],
-    ['Cán nền','Dày 3–5cm, vữa xi măng mác 75'],
-    ['Keo dán gạch','Webertai fix (Pháp / SX Việt Nam)'],
-    ['Keo chà ron','Weber classic (Pháp / SX Việt Nam)'],
-    ['CỬA CHÍNH, CỬA ĐI',''],
-    ['Cửa chính trượt 2 ray','Khung nhôm hệ Nexsta do YKK AP tự luyện, tay nắm âm, khóa sò cao cấp, bánh xe lùa chính xác cao, phụ kiện chống nhấc cánh, phụ kiện chêm kính, van thoát nước do YKK AP sản xuất đồng bộ · Kính Solar Control Xám 12mm · Màu Anodized Plus YK1N (Black) · Xuất xứ Japan'],
-    ['Cửa đi','Khung nhôm hệ Nexsta do YKK AP tự luyện, tay nắm âm, khóa sò cao cấp, bánh xe lùa chính xác cao, phụ kiện chống nhấc cánh, phụ kiện chêm kính, van thoát nước do YKK AP sản xuất đồng bộ · Kính Solar Control Xám 12mm · Màu Anodized Plus YK1N (Black) · Xuất xứ Japan'],
-    ['Cửa sổ','Khung nhôm hệ Nexsta do YKK AP tự luyện, tay nắm âm, khóa sò cao cấp, bánh xe lùa chính xác cao, phụ kiện chống nhấc cánh, phụ kiện chêm kính, van thoát nước do YKK AP sản xuất đồng bộ · Kính Solar Control Xám 12mm · Màu Anodized Plus YK1N (Black) · Xuất xứ Japan'],
-    ['Khóa cửa chính','Yale YDMA 100NP · vân tay + PIN (Italy)'],
-    ['Cửa phòng','Gỗ nhựa Composite ApexDoor · phụ kiện Hafele (bản lề 921.17.142, chặn cửa 489.70.246)'],
-    ['Tay nắm cửa phòng','Hafele 499.62.504 (tay gạt + thân khóa + ruột khóa)'],
-    ['Cửa WC','Gỗ nhựa Composite ApexDoor · phụ kiện Hafele'],
-    ['Tay nắm cửa WC','Hafele 489.10.660'],
-    ['Cửa thép chống cháy','Saigondoor TCC.P1G1-1-C1 · ra sân sau/sân thượng, 1.2×2.4m'],
-    ['LEN, CẦU THANG, LAN CAN',''],
-    ['Gạch cầu thang chống trượt','Nguyên tấm không mí nối, đơn sắc/vân gỗ 470×1200mm (China)'],
-    ['Lan can trong nhà','Kính cường lực 10mm, cao 1100mm, phụ kiện Inox'],
-    ['Tay vịn lan can','Gỗ Oak 50×50 hoặc Inox'],
-    ['Lan can ngoài trời','Inox / sắt mỹ thuật, cao 1.2m, kính an toàn 10mm, trụ inox 304 hộp 38×38mm'],
-    ['Len chân tường','Nhựa Composite 90mm (hoặc PU, PS, PVC)'],
-    ['Len cầu thang','Gạch / đá / gỗ tùy mặt bậc'],
-    ['Ngạch cửa','Kim Sa Trung / đá trắng sứ'],
-    ['Nẹp kết thúc','Nẹp Inox 304'],
-    ['THIẾT BỊ VỆ SINH / NƯỚC',''],
-    ['Bồn cầu điện tử','Hafele · bồn cầu điện tử thông minh 588.79.413 (phòng Master)'],
-    ['Bàn cầu (nắp rửa cơ)','Toto bàn cầu 1 khối kèm nắp rửa cơ ECOWASHER TCW1211A'],
-    ['Tủ lavabo','Toto · chậu gốm sứ, tủ ván Plywood, gương đèn led'],
-    ['Vách kính phòng tắm','Enic · vách góc L / cửa lùa xếp, bản lề êm'],
-    ['Bồn tắm nằm','Toto bồn tắm nhựa PAY1710V/TVBF411 (750D × 1700W × 558H)'],
-    ['Bộ sen xả bồn tắm nhiệt độ','Toto vòi xả bồn nóng lạnh kèm sen tắm GT (3 lỗ) TBG13305A'],
-    ['Vòi sen tắm nhiệt độ','Toto sen cây nhiệt độ có kệ để đồ kèm vòi xả bồn TBW12400V + bát sen cầm tay'],
-    ['Vòi xả lavabo nóng lạnh','Toto vòi gật gù nóng lạnh GA TLG04301V'],
-    ['Co P thoát nước','Toto ống thải chữ P TVLF401'],
-    ['Vòi xịt','Toto vòi xịt nước TVCF202'],
-    ['Combo phụ kiện','Toto bộ 5 sản phẩm L YS408N5V'],
-    ['Phễu thu sàn','Toto TVBA407 (100 × 100 × 40 mm)'],
-    ['Cầu chắn rác ban công/sân thượng','Inox Ceasar F2323'],
-    ['Vòi sân vườn/ban công','Toto vòi nước lạnh (gắn tường) T23B13'],
-    ['Máy bơm nước','Hitachi W-P200NH'],
-    ['Máy bơm tăng áp','Rheken WZB35-400I (không tiếng ồn)'],
-    ['Máy nước nóng gián tiếp','Ariston 30L · ANDRIS2 30 LUX-D AG+'],
-    ['Bồn nước','Tân Á Đại Thành 2000L (+ chân nâng)'],
-    ['ĐÈN, THIẾT BỊ ĐIỆN, MÁY LẠNH',''],
-    ['Đèn spotlight','Soluz YZ-T6257 · 9W-IP20 · 3000K, CRI ≥ 90'],
-    ['Đèn ốp trần ban công','Vinaled IP65 12W · CL-DW12'],
-    ['Đèn cầu thang','Vinaled IP65-3W · SL3-BW3, bóng CREE (USA)'],
-    ['Đèn led hắt trần','Nanoco (nguồn trực tiếp, cuộn 100m)'],
-    ['Dimmer led','Ltech · điều khiển tăng giảm ánh sáng'],
-    ['Công tắc','Panasonic Minerva (đơn/đôi 1 chiều, đơn 2 chiều)'],
-    ['Ổ cắm','Panasonic Minerva (đôi 3 chấu, data Cat6)'],
-    ['Tủ điện âm tường','Panasonic Moderva (tổng 24 đường, tầng 16 đường, sân thượng 8 đường)'],
-    ['Cầu dao (CB)','Panasonic (RCBO 2P1E chống rò · MCB tổng 10kA 2P2E · MCB 1P1E)'],
-    ['Quạt hút WC âm trần','Panasonic FV-15TGU1'],
-    ['Chụp thông gió inox','Vent Cap VT100-304 / VT200-201-C'],
-    ['Đế âm tường chờ ống đồng máy lạnh','Nhựa ABS chống cháy, có nắp che & máng thoát'],
-    ['Ống đồng máy lạnh','Thái Lan dày 7 zem (bảo ôn, co nối, cùm omega)'],
-    ['CÁC HẠNG MỤC KHÁC',''],
-    ['Vệ sinh bàn giao','Vệ sinh thô (2 lần) + vệ sinh tinh trước bàn giao']
-  ];
   // Trọn gói (Tiêu chuẩn) = Wonder cột Cao cấp
   var DQ_TG_CC = [
     ['TRẦN THẠCH CAO',''],
@@ -1853,11 +1750,6 @@
   ];
   // Ma trận vật tư: DQ[phân khúc][hạng mục]. rows = danh mục (đã có) · undefined = đang cập nhật · empty:true = để trống
   var DQ = {
-    tc: {
-      tho: { price:'3.800.000 đ/m²', desc:'Danh mục vật tư phần thô · Tiêu chuẩn', empty:true },
-      ht:  { price:'6.800.000 đ/m²', desc:'Danh mục vật tư hoàn thiện · Tiêu chuẩn', rows: DQ_HT_TC },
-      tg:  { price:'8.400.000 đ/m²', desc:'Danh mục vật tư trọn gói · Tiêu chuẩn', rows: DQ_TG_CC }
-    },
     cc: {
       tho: { price:'từ 5.000.000 đ/m²', desc:'Danh mục vật tư phần thô · Cao cấp', rows: DQ_THO_CC },
       ht:  { price:'từ 10.000.000 đ/m²', desc:'Danh mục vật tư hoàn thiện · Cao cấp', empty:true },
