@@ -1561,7 +1561,7 @@
 
   // ---- Lead form ----
   // ---- Gửi lead về Lark Sheet (qua Apps Script relay · xem lead-relay/README.md) ----
-  var LEAD_ENDPOINT = '';   // ← dán URL /exec cua deployment Google 'Formlead Decox' vao day (xem lead-relay/README)
+  var LEAD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxiLOOCCQnTcA_mMMq-dp-t4tiPRQCO8gzgt0KAaA5j2G55CKS8bTzmCV41e2bnwCaE2Q/exec';   // web app 'Formlead Decox' (chung endpoint voi cac form khac cua site)
   function sendLead(payload){
     if (!LEAD_ENDPOINT) return;
     var body = JSON.stringify(payload);
@@ -1578,21 +1578,13 @@
     e.preventDefault();
     var phone = $('fPhone').value.trim();
     if (!phone) { $('fPhone').focus(); return; }
-    var s = state, c = lastCalc || {}, hp = $('fCompany');
     sendLead({
-      type: 'baogia',   // route toi handler BaoGia.gs (Formlead Decox)
-      page: 'Nhà phố',
-      name: $('fName').value.trim(),
-      phone: phone,
-      area: s.land,
-      density: s.density,
-      scale: quyMoText(),
-      hangmuc: TYPE_FULL[s.type],
-      tier: TIER_FULL[s.tier],
-      cost: (c.isTC ? '≈ ' : 'từ ') + fmtTy(c.total || 0),
-      note: $('fNeed').value.trim(),
-      url: location.href,
-      hp: hp ? hp.value : ''
+      type: 'website',                       // di theo nhanh 'Website' co san cua Apps Script
+      Ten: $('fName').value.trim(),
+      Dienthoai: phone,
+      Noidung: $('fNeed').value.trim() + '\n— Trang: ' + location.href,
+      Nguon: 'Báo giá nhà phố'
+      // Thoigian: Apps Script tu dien gio server neu khong gui
     });
     $('leadForm').style.display = 'none';
     $('leadThanks').style.display = 'block';
