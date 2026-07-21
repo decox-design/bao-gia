@@ -1,93 +1,61 @@
-# Lead relay → Lark Sheet
+# Lead form Báo giá → Google Sheet (Formlead Decox)
 
-Đổ dữ liệu form "Nhận báo giá" của `nha-pho.html` & `can-ho.html` vào sheet:
-`https://dsa07judxqbm.sg.larksuite.com/sheets/Oq48siFxbhPqZotDznRl1Qv3g9d` (file "Data", Decox Group 5)
+Form "Nhận báo giá" của `nha-pho.html` & `can-ho.html` đổ về Google Sheet **Formlead Decox**,
+dùng chung Apps Script đang phục vụ các form khác của website — nhưng **tách riêng**, không đụng
+các form cũ.
 
-> File cũ `TFTasxNAuh7ApCt9D5tlBhpsgjh` là tài liệu **External** nên không add app vào được — xem cảnh báo ở mục 1.
+> Trước đây bản này đổ về Lark Sheet (file `BaoGia` cũ + `lead-relay/Code.gs`). Đã chuyển sang
+> Google Sheet theo yêu cầu. `Code.gs` (Lark) giữ lại để tham khảo, không còn dùng.
 
-Trình duyệt **không** gọi thẳng Lark được (API bắt buộc token sinh từ App Secret + chặn CORS),
-nên Apps Script đứng giữa: page → Apps Script Web App → Lark API.
+## Kiến trúc
 
 ```
-Form (HTML tĩnh) --POST JSON--> Apps Script Web App --values_append--> Lark Sheet
-                                 (giữ App Secret)
+Form (nha-pho/can-ho.html) --POST {type:'baogia',...}--> Apps Script doPost --> luuBaoGia() --> tab "Báo giá"
+                                                          (route theo type)
 ```
 
-## 1. Tạo Lark custom app
+Apps Script "Formlead Decox" route theo `data.type`:
+- `type === 'duan'`   → sheet **Dự án**   (form cũ — KHÔNG đụng)
+- `type === 'baogia'` → **luuBaoGia()** trong `BaoGia.gs` → tab **Báo giá** (12 cột) ← MỚI
+- mặc định            → sheet **Website** (form cũ — KHÔNG đụng)
 
-1. Vào https://open.larksuite.com/app → **Create custom app**, đặt tên vd `Decox Lead Relay`.
-2. Tab **Credentials & Basic Info**: copy **App ID** và **App Secret** (giữ kín, chỉ dán vào bước 3).
-3. Tab **Permissions & Scopes**: thêm `sheets:spreadsheet` (hoặc `drive:drive`) → **Create version & publish**,
-   chờ admin workspace duyệt.
-4. Mở file sheet trên → **Share** → thêm chính app vừa tạo làm cộng tác viên quyền **Edit**
-   (gõ tên app trong ô mời). Thiếu bước này API sẽ trả `permission denied`.
+## Đã làm trong Apps Script (project Formlead Decox)
 
-> ⚠️ **Add app báo "Failed to invite members"?**
-> App chỉ add được vào tài liệu **cùng tenant với app**. File có badge `External` (được chia sẻ
-> chéo tổ chức) sẽ luôn báo lỗi này dù scope đã cấp đủ.
-> Cách xử lý: tạo sheet mới ngay trong Drive của tenant mình → add app vào sheet mới đó →
-> đổi `SHEET_TOKEN` / `SHEET_ID` theo URL mới. Sheet cũ nếu vẫn cần thì dùng công thức tham chiếu
-> hoặc copy dữ liệu sang sau.
-> Nếu sheet mới cũng lỗi → admin workspace đang chặn app làm cộng tác viên tài liệu, phải nhờ admin
-> mở, hoặc cấp **Range of access** cho app trong Permissions & Scopes.
+1. **Thêm file `BaoGia.gs`** — hàm `luuBaoGia(data, ss)` ghi 1 dòng 12 cột vào tab "Báo giá"
+   (tự tạo tab + dòng tiêu đề nếu chưa có); `setupBaoGia()` để tạo tab thủ công nếu muốn.
+2. **Thêm 1 dòng route** trong `Mã.gs`, ngay sau `var type = data.type || 'website';`:
+   ```js
+   if (type === 'baogia') return luuBaoGia(data, ss);
+   ```
+   Mọi dòng cũ giữ nguyên — 2 nhánh `website`/`duan` không đổi.
 
-## 2. Tạo Apps Script project
+Bản đồng bộ của 2 file này: `lead-relay/BaoGia.gs` và (Mã.gs) là bản gốc + đúng 1 dòng route.
 
-1. https://script.google.com → **New project**, đặt tên `Decox Lead Relay`.
-2. Dán toàn bộ nội dung `Code.gs` trong thư mục này vào file `Code.gs`.
+## CÒN LẠI — bạn làm (deploy đang lỗi UI phía Google, retry sau)
 
-## 3. Khai báo Script Properties
+1. Mở project → **Deploy → New deployment → Web app**
+   - Execute as: **Me** · Who has access: **Anyone** → **Deploy**
+   - (Nếu hiện "Something went wrong" thì reload trang, chờ ~10s rồi thử lại — lỗi tạm thời của Google.)
+   - Đây là deployment MỚI, deployment của form cũ vẫn nguyên (pin version cũ) nên form cũ không ảnh hưởng.
+   - *Hoặc* nếu muốn dùng CHUNG 1 URL với các form khác của site: **Manage deployments → (deployment hiện có)
+     → ✏️ → Version: New version → Deploy**. Cách này an toàn (thay đổi chỉ là thêm nhánh `baogia`)
+     và sau khi merge site chỉ có 1 endpoint.
+2. Copy **Web app URL** (`.../exec`) → dán vào `var LEAD_ENDPOINT = ''` ở **cả** `nha-pho.html` và `can-ho.html`.
+   (Gửi mình URL, mình dán + test + push giúp.)
 
-Project Settings (⚙) → **Script Properties** → Add:
-
-| Property | Value |
-|---|---|
-| `LARK_APP_ID` | App ID ở bước 1 |
-| `LARK_APP_SECRET` | App Secret ở bước 1 |
-| `SHEET_TOKEN` | phần sau `/sheets/` trong URL — copy trực tiếp từ thanh địa chỉ, đừng gõ tay |
-| `SHEET_ID` | id của tab (URL không có `?sheet=` thì để tạm `Sheet1`, chạy `checkAccess` sẽ in ra id đúng để điền lại) |
-| `LARK_DOMAIN` | `open.larksuite.com` |
-
-> App Secret **chỉ** nằm ở đây. Không bao giờ đưa vào file HTML — page là public, ai cũng xem được source.
-
-## 4. Kiểm tra & deploy
-
-1. Chọn hàm `checkAccess` → **Run** (lần đầu Google hỏi cấp quyền → Allow).
-   Log phải in ra tên file + danh sách sheetId. Lỗi ở đây là do quyền/token, xử lý trước khi đi tiếp.
-2. Chọn hàm `setupHeader` → **Run**. Sheet sẽ có dòng tiêu đề 12 cột.
-3. Chọn `testAppend` → **Run** → sheet có thêm 1 dòng test. Xoá dòng test sau khi xong.
-4. **Deploy → New deployment → Web app**
-   - Execute as: **Me**
-   - Who has access: **Anyone**
-   - → copy **Web app URL** (dạng `https://script.google.com/macros/s/AKfy…/exec`)
-5. Mở URL đó trên trình duyệt: thấy `{"ok":true,...}` là xong.
-
-## 5. Nối vào 2 page
-
-Trong `nha-pho.html` và `can-ho.html`, tìm dòng:
-
-```js
-var LEAD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4Z5upootqdctEBaWskkSiXlCAkn7C9Mv34-v_8P_diRipwhk8tIofUo5bWoBhRuw7EQ/exec';
-```
-
-Đã nối sẵn (deployment "Lead form nha pho + can ho", Version 1, Jul 2026). Nếu deploy lại ra URL mới thì
-sửa hằng số này ở cả 2 file.
-
-Mỗi lần sửa `Code.gs` phải **Deploy → Manage deployments → Edit → New version** thì bản live mới đổi.
-
-## Cột trong sheet
+## Cột tab "Báo giá"
 
 | A | B | C | D | E | F | G | H | I | J | K | L |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Thời gian | Trang nguồn | Họ tên | Số điện thoại | Diện tích (m²) | Mật độ XD (%) | Quy mô / Loại hình | Hạng mục | Phân khúc | Chi phí dự kiến | Ghi chú của khách | URL |
 
-- Cột F (mật độ) chỉ có ở nhà phố, căn hộ để trống.
-- Số điện thoại ghi kèm dấu `'` đầu để Lark không cắt số 0.
+Cột F (mật độ) chỉ nhà phố; số điện thoại có `'` đầu để không mất số 0.
 
-## Lưu ý
+## Payload form gửi lên
 
-- Web app để **Anyone** nên URL là public: người khác biết URL có thể bắn dữ liệu rác. Form đã có
-  honeypot chặn bot đơn giản; nếu bị spam thật thì thêm reCAPTCHA hoặc kiểm tra `Referer` trong `doPost`.
-- Page gửi bằng `sendBeacon`/`fetch no-cors` → không đọc được phản hồi, form luôn hiện "Cảm ơn".
-  Muốn báo lỗi cho khách khi ghi thất bại thì phải đổi sang `fetch` thường + bật CORS (Apps Script
-  không set được header CORS, khi đó cần Cloudflare Worker thay vì Apps Script).
+```json
+{ "type": "baogia", "page": "Nhà phố", "name": "...", "phone": "09...",
+  "area": 80, "density": 70, "scale": "3 tầng", "hangmuc": "Hoàn thiện cơ bản",
+  "tier": "Tiết kiệm", "cost": "từ 1,30 tỷ", "note": "...", "url": "...", "hp": "" }
+```
+`hp` = honeypot (bot điền thì bỏ qua). Hoạt động cả trước & sau khi merge vào website — chỉ là 1 HTTP POST tới URL cố định.

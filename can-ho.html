@@ -1341,7 +1341,7 @@
 
   // ---- Lead form ----
   // ---- Gửi lead về Lark Sheet (qua Apps Script relay · xem lead-relay/README.md) ----
-  var LEAD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4Z5upootqdctEBaWskkSiXlCAkn7C9Mv34-v_8P_diRipwhk8tIofUo5bWoBhRuw7EQ/exec';   // ← dán Web app URL của Apps Script vào đây
+  var LEAD_ENDPOINT = '';   // ← dán URL /exec cua deployment Google 'Formlead Decox' vao day (xem lead-relay/README)
   function sendLead(payload){
     if (!LEAD_ENDPOINT) return;
     var body = JSON.stringify(payload);
@@ -1360,13 +1360,14 @@
     if (!phone) { $('fPhone').focus(); return; }
     var s = state, c = lastCalc || {}, hp = $('fCompany');
     sendLead({
+      type: 'baogia',   // route toi handler BaoGia.gs (Formlead Decox)
       page: 'Căn hộ',
       name: $('fName').value.trim(),
       phone: phone,
       area: s.area,
       density: '',
       scale: quyMoText(),
-      type: TYPE_FULL[s.type],
+      hangmuc: TYPE_FULL[s.type],
       tier: TIER_FULL[s.tier],
       cost: (c.isTC ? '≈ ' : 'từ ') + fmtTy(c.total || 0),
       note: $('fNeed').value.trim(),
