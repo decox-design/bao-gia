@@ -1579,10 +1579,10 @@
     var phone = $('fPhone').value.trim();
     if (!phone) { $('fPhone').focus(); return; }
     sendLead({
-      type: 'website',                       // di theo nhanh 'Website' co san cua Apps Script
+      type: 'website',                       // ghi vao tab Website (Formlead Decox)
       Ten: $('fName').value.trim(),
       Dienthoai: phone,
-      Noidung: $('fNeed').value.trim() + '\n— Trang: ' + location.href,
+      Noidung: $('fNeed').value.trim(),
       Nguon: 'Báo giá nhà phố'
       // Thoigian: Apps Script tu dien gio server neu khong gui
     });
